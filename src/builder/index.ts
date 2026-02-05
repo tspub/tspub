@@ -57,6 +57,9 @@ export async function build(options: BuildOptions): Promise<void> {
 
   if (options.clean) {
     await rm(outPath, { recursive: true, force: true });
+    // Remove tsc incremental cache so DTS regenerates correctly
+    await rm(join(dir, "tsconfig.tsbuildinfo"), { force: true });
+    await rm(join(dir, "tsconfig.build.tsbuildinfo"), { force: true });
   }
 
   await mkdir(outPath, { recursive: true });
