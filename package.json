@@ -25,7 +25,7 @@
     "!dist/**/*.map"
   ],
   "scripts": {
-    "build": "node dist/bin/tspub.js build",
+    "build": "test -f dist/bin/tspub.js || node scripts/bootstrap.js && node dist/bin/tspub.js build",
     "dev": "node dist/bin/tspub.js build --watch",
     "bootstrap": "node scripts/bootstrap.js",
     "test": "vitest",
