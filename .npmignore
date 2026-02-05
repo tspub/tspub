@@ -3,9 +3,12 @@ test/
 bin/
 tsconfig.json
 vitest.config.ts
+tspub.config.*
+scripts/
 .github/
 coverage/
 *.tsbuildinfo
 oxlintrc.json
 lefthook.yml
 examples/
+*.map

@@ -64,6 +64,10 @@ export const rules: Rule[] = [{
 
 Neither publint nor attw support plugins.
 
+### Self-Hosting
+
+tspub builds itself. The same `tspub build` pipeline you use is the one that produces tspub's own `dist/`. No external bundler needed — dogfooded from day one.
+
 ### Remote Scanning
 
 ```bash

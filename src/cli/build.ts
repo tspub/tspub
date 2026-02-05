@@ -28,6 +28,26 @@ interface BuildActionOptions {
   dtsBundle?: boolean;
 }
 
+/** Parse --entry flag: supports "a.ts,b.ts" (array) or "name=path" (named) or mixed */
+export function parseEntryFlag(raw: string): string[] | Record<string, string> {
+  const parts = raw.split(",").map((e) => e.trim());
+  if (parts.some((p) => p.includes("="))) {
+    const result: Record<string, string> = {};
+    for (const part of parts) {
+      const eqIdx = part.indexOf("=");
+      if (eqIdx === -1) {
+        // Auto-derive name: strip src/ prefix + extension (tsup/unbuild convention)
+        const name = part.replace(/^src\//, "").replace(/\.tsx?$/, "");
+        result[name] = part;
+      } else {
+        result[part.slice(0, eqIdx)] = part.slice(eqIdx + 1);
+      }
+    }
+    return result;
+  }
+  return parts;
+}
+
 async function buildSinglePackage(
   dir: string,
   options: BuildActionOptions,
@@ -51,7 +71,7 @@ async function buildSinglePackage(
   }
 
   const entry = options.entry
-    ? options.entry.split(",").map((e: string) => e.trim())
+    ? parseEntryFlag(options.entry)
     : buildConfig?.entry ?? undefined;
 
   const clean = options.clean === true || (options.clean === undefined && buildConfig?.clean === true);
@@ -114,7 +134,7 @@ export function registerBuild(program: Command): void {
     .option("--no-dts", "Skip .d.ts generation")
     .option("--no-sourcemap", "Skip sourcemap generation")
     .option("--watch", "Watch mode")
-    .option("--entry <path>", "Entry file(s) (comma-separated)")
+    .option("--entry <paths>", "Entry file(s): paths or name=path mappings (comma-separated)")
     .option("--clean", "Remove output directory before building")
     .option("--out-dir <dir>", "Output directory")
     .option("--filter <pattern>", "Filter workspace packages by name pattern")

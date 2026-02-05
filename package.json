@@ -1,7 +1,7 @@
 {
   "name": "tspub",
   "version": "0.1.0",
-  "description": "The unified TypeScript package toolkit — init, build, check, publish in one tool",
+  "description": "The unified TypeScript package toolkit — init, build, check, publish in one tool. tspub builds itself.",
   "type": "module",
   "bin": {
     "tspub": "./dist/bin/tspub.js"
@@ -21,11 +21,13 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.map"
   ],
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
+    "build": "node dist/bin/tspub.js build",
+    "dev": "node dist/bin/tspub.js build --watch",
+    "bootstrap": "node scripts/bootstrap.js",
     "test": "vitest",
     "test:run": "vitest run",
     "test:ecosystem": "vitest run --config vitest.ecosystem.config.ts",
@@ -73,7 +75,6 @@
     "@types/node": "^22.0.0",
     "@types/prompts": "^2.4.9",
     "oxlint": "^1.16.0",
-    "tsdown": "^0.12.0",
     "typescript": "^5.7.0",
     "vitepress": "^1.6.4",
     "vitest": "^3.0.0"

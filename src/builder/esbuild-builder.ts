@@ -1,6 +1,6 @@
 import * as esbuild from "esbuild";
-import { join, basename } from "node:path";
-import { stat, readFile as fsReadFile, writeFile as fsWriteFile } from "node:fs/promises";
+import { join, basename, dirname } from "node:path";
+import { stat, readFile as fsReadFile, writeFile as fsWriteFile, rename, mkdir, access } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { execFile } from "node:child_process";
 import { stripJsonComments } from "../shared/strip-json-comments.js";
@@ -76,7 +76,7 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
     sourcemap,
     watch,
     minify = false,
-    splitting = false,
+    splitting,
     target = "node18",
     platform = "node",
     external: userExternal,
@@ -100,6 +100,10 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
   const outPath = join(dir, outDir);
   const externals = resolveExternals(dir, userExternal, noExternal);
   const container = createPluginContainer(userPlugins);
+
+  // Auto-enable splitting for multi-entry ESM (tsup/tsdown convention)
+  const entryCount = Array.isArray(entry) ? entry.length : Object.keys(entry).length;
+  const autoSplitting = entryCount > 1 ? (splitting ?? true) : splitting;
 
   await container.buildStart();
 
@@ -177,7 +181,7 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
       external: isIIFE ? [] : externals.strings,
       sourcemap,
       minify,
-      splitting: isESM ? splitting : false,
+      splitting: isESM ? (autoSplitting ?? false) : false,
       metafile: true,
       plugins: esbuildPlugins,
       define,
@@ -253,6 +257,11 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
   if (dts) {
     try {
       await generateDts({ dir, outDir, packageType });
+
+      // Relocate .d.ts files for object entries where outName differs from source path
+      if (!Array.isArray(entry)) {
+        await relocateEntryDts(outPath, entry);
+      }
 
       // Bundle declarations if requested
       if (dtsBundleOpt) {
@@ -466,6 +475,48 @@ async function warnTsconfigPaths(dir: string): Promise<void> {
     }
   } catch (err) {
     logger.verbose(`[warnTsconfigPaths]: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
+/**
+ * Relocate .d.ts files for object entries where the output name differs from the source path.
+ * tsc emits declarations mirroring the source tree (e.g. src/index.ts → dist/src/index.d.ts),
+ * but object entries map to different output names (e.g. { index: "src/index.ts" } → dist/index.d.ts).
+ */
+async function relocateEntryDts(
+  outPath: string,
+  entry: Record<string, string>,
+): Promise<void> {
+  for (const [outName, srcPath] of Object.entries(entry)) {
+    const tscRelative = srcPath.replace(/\.tsx?$/, ".d.ts");
+    const targetRelative = outName + ".d.ts";
+
+    if (tscRelative === targetRelative) continue;
+
+    const tscFile = join(outPath, tscRelative);
+    const targetFile = join(outPath, targetRelative);
+
+    try {
+      await access(tscFile);
+    } catch {
+      continue; // tsc didn't generate this file
+    }
+
+    await mkdir(dirname(targetFile), { recursive: true });
+    await rename(tscFile, targetFile);
+
+    // Also relocate .d.ts.map and .d.cts if they exist
+    for (const suffix of [".d.ts.map", ".d.cts"]) {
+      const srcVariant = join(outPath, srcPath.replace(/\.tsx?$/, suffix));
+      const tgtVariant = join(outPath, outName + suffix);
+      try {
+        await access(srcVariant);
+        await mkdir(dirname(tgtVariant), { recursive: true });
+        await rename(srcVariant, tgtVariant);
+      } catch {
+        // variant doesn't exist — skip
+      }
+    }
   }
 }
 

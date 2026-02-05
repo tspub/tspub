@@ -219,7 +219,7 @@ tspub build --minify           # production
 tspub build --watch            # dev mode
 ```
 
-- Powered by esbuild
+- Powered by esbuild — tspub builds itself
 - Infers entries from your package.json
 - CJS interop that actually works (no `.default` nonsense)
 - Size budgets — build fails if too big

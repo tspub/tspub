@@ -46,6 +46,12 @@ features:
     link: /guide/getting-started#scan
     linkText: Try scanning →
 
+  - icon: 🔁
+    title: Builds Itself
+    details: tspub builds itself. The same build pipeline you use is the one that produces tspub. Dogfooded from day one.
+    link: /build/
+    linkText: Build options →
+
   - icon: 🔌
     title: Plugin System
     details: Write custom rules. Load from npm or local files. Severity overrides. Profiles.

@@ -192,6 +192,46 @@ describe("esbuild-builder", () => {
     expect(chunkFiles.length).toBeGreaterThan(0);
   });
 
+  // Auto-splitting: multi-entry ESM without explicit splitting flag
+  it("auto-enables splitting for multi-entry ESM", async () => {
+    await buildWithEsbuild({
+      dir: MULTI_FIXTURE_DIR,
+      entry: ["src/index.ts", "src/utils.ts"],
+      formats: ["esm"],
+      outDir: OUT_DIR,
+      dts: false,
+      sourcemap: false,
+      watch: false,
+      // No explicit splitting option — should auto-enable
+    });
+
+    // Both entry outputs should exist
+    expect(await exists(join(MULTI_OUT_PATH, "index.js"))).toBe(true);
+    expect(await exists(join(MULTI_OUT_PATH, "utils.js"))).toBe(true);
+
+    // Should have a shared chunk for shared.ts (splitting was auto-enabled)
+    const files = await readdir(MULTI_OUT_PATH);
+    const chunkFiles = files.filter((f) => f.startsWith("chunk-") && f.endsWith(".js"));
+    expect(chunkFiles.length).toBeGreaterThan(0);
+  });
+
+  // Auto-splitting: single-entry ESM should NOT auto-split
+  it("does not auto-enable splitting for single-entry ESM", async () => {
+    await buildWithEsbuild({
+      dir: FIXTURE_DIR,
+      entry: ["src/index.ts"],
+      formats: ["esm"],
+      outDir: OUT_DIR,
+      dts: false,
+      sourcemap: false,
+      watch: false,
+    });
+
+    const files = await readdir(OUT_PATH);
+    const chunkFiles = files.filter((f) => f.startsWith("chunk-") && f.endsWith(".js"));
+    expect(chunkFiles.length).toBe(0);
+  });
+
   // Fix 11: Object-style entry config
   it("supports object-style entry points", async () => {
     await buildWithEsbuild({
