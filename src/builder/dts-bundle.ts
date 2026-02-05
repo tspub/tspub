@@ -118,7 +118,7 @@ async function bundleSingleEntry(
   const resolvedEntry = resolve(entryPath);
   const resolvedOutDir = resolve(outDir);
 
-  // Phase 1: Parse — create program over .d.ts files
+  // Create a TS program over the .d.ts files
   const compilerOptions: import("typescript").CompilerOptions = {
     declaration: true,
     moduleResolution: ts.ModuleResolutionKind.Node16,
@@ -156,7 +156,7 @@ async function bundleSingleEntry(
     typeOnlyExports: new Set(),
   };
 
-  // Phase 2a: Gather entry exports for tree-shaking reference
+  // Gather entry exports for tree-shaking
   const entrySymbol = checker.getSymbolAtLocation(entrySourceFile);
   if (entrySymbol) {
     const exports = checker.getExportsOfModule(entrySymbol);
@@ -165,10 +165,10 @@ async function bundleSingleEntry(
     }
   }
 
-  // Phase 2b: Collect declarations recursively
+  // Collect declarations recursively
   collectFromFile(ctx, entrySourceFile, true);
 
-  // Phase 2c: Usage analysis — tree shake unreachable declarations
+  // Tree-shake unreachable declarations
   const reachable = buildReachableSet(ctx);
 
   // Filter declarations to only reachable ones
@@ -177,10 +177,10 @@ async function bundleSingleEntry(
     return reachable.has(d.symbol);
   });
 
-  // Phase 2d: Collision detection
+  // Detect and resolve name collisions
   resolveCollisions(ctx, filteredDecls);
 
-  // Phase 3: Emit
+  // Emit the bundled output
   return emitBundle(ctx, filteredDecls);
 }
 

@@ -119,17 +119,12 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
     logger.verbose(`[readPackageJson]: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  // Resolve entry points (support object entries)
   const entryPoints = resolveEntryPoints(dir, entry);
-
-  // Detect bin entries for shebang preservation
   const binEntries = resolveBinEntries(pkg);
 
-  // Build define map (replaceNodeEnv takes precedence over envProduction)
   const effectiveReplaceNodeEnv = replaceNodeEnv ?? envProduction;
   const define = buildDefineMap(userDefine, minify, effectiveReplaceNodeEnv);
 
-  // Merge loaders
   const loaderMap = { ...DEFAULT_LOADERS, ...userLoader };
   if (platform === "node" && !userLoader?.[".css"]) {
     loaderMap[".css"] = "empty";
@@ -137,10 +132,7 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
     loaderMap[".css"] = "css";
   }
 
-  // Resolve treeshake options
   const treeShaking = resolveTreeshake(treeshake);
-
-  // Detect tsconfig paths and warn
   await warnTsconfigPaths(dir);
 
   for (const format of formats) {
@@ -150,12 +142,10 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
 
     const esbuildPlugins: esbuild.Plugin[] = [];
 
-    // Add externals plugin for subpath + regex matching
     if (externals.plugin) {
       esbuildPlugins.push(externals.plugin);
     }
 
-    // Add shebang plugin
     const shebangPlugin = createShebangPlugin(dir, entry, binEntries);
     if (shebangPlugin) {
       esbuildPlugins.push(shebangPlugin);
@@ -165,7 +155,6 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
       esbuildPlugins.push(cjsInteropPlugin());
     }
 
-    // Add user esbuild plugins
     esbuildPlugins.push(...userEsbuildPlugins);
 
     const esbuildFormat = isIIFE ? "iife" : isESM ? "esm" : "cjs";
