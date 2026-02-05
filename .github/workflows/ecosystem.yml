@@ -1,0 +1,97 @@
+name: Ecosystem
+
+on:
+  schedule:
+    # Run nightly at 04:00 UTC
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  ecosystem-pinned:
+    name: "pinned: ${{ matrix.target.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - { name: zod, repo: "colinhacks/zod", ref: "v3.24.2" }
+          - { name: nanoid, repo: "ai/nanoid", ref: "5.1.5" }
+          - { name: type-fest, repo: "sindresorhus/type-fest", ref: "v4.37.0" }
+          - { name: cva, repo: "joe-bell/cva", ref: "v1.0.0-beta.4", dir: "packages/cva" }
+          - { name: superjson, repo: "flightcontrolhq/superjson", ref: "v2.2.2" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Clone ${{ matrix.target.name }}@${{ matrix.target.ref }}
+        run: |
+          git clone --depth 1 --branch ${{ matrix.target.ref }} --single-branch \
+            https://github.com/${{ matrix.target.repo }}.git \
+            /tmp/ecosystem/${{ matrix.target.name }}
+      - name: Run tspub check
+        run: |
+          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
+          if [ -n "${{ matrix.target.dir }}" ]; then
+            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
+          fi
+          cd "$TARGET_DIR"
+          node ${{ github.workspace }}/dist/bin/tspub.js check 2>&1 || true
+      - name: Run ecosystem test
+        run: npx vitest run --config vitest.ecosystem.config.ts -t "${{ matrix.target.name }}"
+
+  ecosystem-latest:
+    name: "latest: ${{ matrix.target.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - { name: zod, repo: "colinhacks/zod", dir: "" }
+          - { name: nanoid, repo: "ai/nanoid", dir: "" }
+          - { name: type-fest, repo: "sindresorhus/type-fest", dir: "" }
+          - { name: superjson, repo: "flightcontrolhq/superjson", dir: "" }
+          - { name: ts-pattern, repo: "gvergnaud/ts-pattern", dir: "" }
+          - { name: effect, repo: "Effect-TS/effect", dir: "packages/effect" }
+          - { name: trpc, repo: "trpc/trpc", dir: "packages/server" }
+          - { name: drizzle-orm, repo: "drizzle-team/drizzle-orm", dir: "drizzle-orm" }
+          - { name: hono, repo: "honojs/hono", dir: "" }
+          - { name: date-fns, repo: "date-fns/date-fns", dir: "" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Clone ${{ matrix.target.name }}@latest
+        run: |
+          git clone --depth 1 \
+            https://github.com/${{ matrix.target.repo }}.git \
+            /tmp/ecosystem/${{ matrix.target.name }}
+      - name: Run tspub check
+        run: |
+          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
+          if [ -n "${{ matrix.target.dir }}" ]; then
+            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
+          fi
+          cd "$TARGET_DIR"
+          node ${{ github.workspace }}/dist/bin/tspub.js check 2>&1
+        # No "|| true" — if tspub crashes on latest, we want to know
+        continue-on-error: true
+      - name: Capture results
+        if: always()
+        run: |
+          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
+          if [ -n "${{ matrix.target.dir }}" ]; then
+            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
+          fi
+          cd "$TARGET_DIR"
+          echo "## ${{ matrix.target.name }} (latest)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          node ${{ github.workspace }}/dist/bin/tspub.js check 2>&1 || true >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

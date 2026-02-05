@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test:run
+      - run: node ./dist/bin/tspub.js check
+
+  ecosystem:
+    runs-on: ubuntu-latest
+    needs: ci
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - { name: zod, repo: "colinhacks/zod", ref: "v3.24.2" }
+          - { name: nanoid, repo: "ai/nanoid", ref: "5.1.5" }
+          - { name: type-fest, repo: "sindresorhus/type-fest", ref: "v4.37.0" }
+          - { name: cva, repo: "joe-bell/cva", ref: "v1.0.0-beta.4", dir: "packages/cva" }
+          - { name: superjson, repo: "flightcontrolhq/superjson", ref: "v2.2.2" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Clone ${{ matrix.target.name }}@${{ matrix.target.ref }}
+        run: |
+          git clone --depth 1 --branch ${{ matrix.target.ref }} --single-branch \
+            https://github.com/${{ matrix.target.repo }}.git \
+            /tmp/ecosystem/${{ matrix.target.name }}
+      - name: Run tspub check on ${{ matrix.target.name }}
+        run: |
+          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
+          if [ -n "${{ matrix.target.dir }}" ]; then
+            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
+          fi
+          node ./dist/bin/tspub.js check 2>&1 || true
+        working-directory: ${{ matrix.target.dir && format('/tmp/ecosystem/{0}/{1}', matrix.target.name, matrix.target.dir) || format('/tmp/ecosystem/{0}', matrix.target.name) }}
+        # "|| true" because we expect real-world packages to have issues.
+        # The goal is to verify tspub doesn't crash, not that every package is perfect.
+      - name: Run ecosystem test suite for ${{ matrix.target.name }}
+        run: npx vitest run --config vitest.ecosystem.config.ts -t "${{ matrix.target.name }}"
