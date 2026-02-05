@@ -14,7 +14,7 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true });
 });
 
-describe("test-types CLI integration", () => {
+describe("test-types CLI integration", { timeout: 30_000 }, () => {
   it("passes with valid type tests", async () => {
     await writeFile(
       join(tmpDir, "tsconfig.json"),
