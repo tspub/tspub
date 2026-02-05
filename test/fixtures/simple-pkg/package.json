@@ -1,0 +1,15 @@
+{
+  "name": "simple-pkg",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "dependencies": {
+    "chalk": "^5.0.0"
+  }
+}

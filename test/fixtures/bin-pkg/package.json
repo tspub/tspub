@@ -1,0 +1,11 @@
+{
+  "name": "bin-pkg",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "my-cli": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  }
+}

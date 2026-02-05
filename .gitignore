@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+coverage/
+
+# Vercel
+.vercel/
+
+# VitePress
+docs/.vitepress/cache/
+docs/.vitepress/dist/

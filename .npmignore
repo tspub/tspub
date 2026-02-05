@@ -1,0 +1,11 @@
+src/
+test/
+bin/
+tsconfig.json
+vitest.config.ts
+.github/
+coverage/
+*.tsbuildinfo
+oxlintrc.json
+lefthook.yml
+examples/

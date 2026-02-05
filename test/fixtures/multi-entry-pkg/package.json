@@ -1,0 +1,15 @@
+{
+  "name": "multi-entry-pkg",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "multi-entry": "./dist/bin/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./utils": "./dist/utils.js"
+  },
+  "dependencies": {
+    "chalk": "^5.0.0"
+  }
+}
