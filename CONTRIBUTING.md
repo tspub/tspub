@@ -14,15 +14,16 @@ npm test
 
 ```
 src/
-├── builder/        Build orchestration (tsdown wrapper, changelog generation)
+├── builder/        Build orchestration (esbuild-based, changelog generation)
 ├── changeset/      Changeset parsing, versioning, snapshot releases
 ├── checker/        Package validation engine
 │   ├── framework/  Rule runner, context builder, types
-│   ├── rules/      40+ built-in rules organized by category
-│   │   ├── exports/   Export field validation (23 rules)
-│   │   ├── types/     TypeScript config & resolution (9 rules)
-│   │   ├── files/     File inclusion & format checks (7 rules)
-│   │   ├── metadata/  Package metadata validation (8 rules)
+│   ├── rules/      70 built-in rules organized by category
+│   │   ├── exports/   Export field validation (28 rules)
+│   │   ├── imports/   Import map validation (6 rules)
+│   │   ├── types/     TypeScript config & resolution (14 rules)
+│   │   ├── files/     File inclusion & format checks (10 rules)
+│   │   ├── metadata/  Package metadata validation (11 rules)
 │   │   ├── size/      Package size checks (1 rule)
 │   │   └── utils/     Shared helpers (exports traversal, format detection)
 │   └── plugins.ts  Plugin loader
@@ -104,12 +105,12 @@ const baseCtx = {
 
 describe("exports/my-rule", () => {
   it("detects the problem", () => {
-    const results = myRule.check({ ...baseCtx, pkg: { /* bad config */ } });
+    const results = await myRule.check({ ...baseCtx, pkg: { /* bad config */ } });
     expect(results).toHaveLength(1);
   });
 
   it("passes for correct config", () => {
-    const results = myRule.check({ ...baseCtx, pkg: { /* good config */ } });
+    const results = await myRule.check({ ...baseCtx, pkg: { /* good config */ } });
     expect(results).toHaveLength(0);
   });
 });
@@ -130,6 +131,12 @@ npm run typecheck
 # Lint
 npm run lint
 ```
+
+## Linting & Formatting
+
+tspub uses [oxlint](https://oxc.rs/docs/guide/usage/linter) for linting — a fast Rust-based linter. Config is in `oxlintrc.json`. Pre-commit hooks via [lefthook](https://github.com/evilmartians/lefthook) run lint and typecheck automatically on staged files.
+
+There is no Prettier or ESLint. Formatting conventions are enforced by `.editorconfig` (2-space indent, LF line endings, UTF-8). Make sure your editor respects `.editorconfig` files.
 
 ## Changeset Workflow for Contributors
 

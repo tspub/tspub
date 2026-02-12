@@ -7,7 +7,7 @@ import type { TspubConfig } from "tspub";
  * All fields are optional — tspub works with zero config.
  */
 export default {
-  // Build options (passed to tsdown under the hood)
+  // Build options (passed to esbuild under the hood)
   build: {
     // Output formats — default: ["esm"]
     formats: ["esm", "cjs"],
