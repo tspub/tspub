@@ -21,12 +21,13 @@ jobs:
           - { name: superjson, repo: "flightcontrolhq/superjson", ref: "v2.2.2" }
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
       - name: Clone ${{ matrix.target.name }}@${{ matrix.target.ref }}
         run: |
           git clone --depth 1 --branch ${{ matrix.target.ref }} --single-branch \
@@ -62,12 +63,13 @@ jobs:
           - { name: date-fns, repo: "date-fns/date-fns", dir: "" }
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
       - name: Clone ${{ matrix.target.name }}@latest
         run: |
           git clone --depth 1 \

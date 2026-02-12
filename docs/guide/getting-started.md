@@ -111,7 +111,7 @@ On macOS/Linux, ensure the target directory is writable. tspub does not require 
 Run `tspub check` first — it will tell you exactly which exports point to missing files. Usually a `clean: true` rebuild fixes it.
 
 **Windows-specific: `EPERM` or path issues**
-Use forward slashes in config paths. Avoid running from OneDrive-synced directories. Node 18+ is required.
+Use forward slashes in config paths. Avoid running from OneDrive-synced directories. Node 20+ is required.
 
 ## Exit Codes
 

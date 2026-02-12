@@ -7,7 +7,7 @@
 ## Checklist
 
 - [ ] Tests added/updated
-- [ ] `npm run test:run` passes
-- [ ] `npm run typecheck` passes
+- [ ] `pnpm run test:run` passes
+- [ ] `pnpm run typecheck` passes
 - [ ] Breaking changes are documented in the PR description
 - [ ] Changeset added (if user-facing change)

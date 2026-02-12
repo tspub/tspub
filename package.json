@@ -22,7 +22,10 @@
   },
   "files": [
     "dist",
-    "!dist/**/*.map"
+    "!dist/**/*.map",
+    "!dist/**/*.d.cts",
+    "!dist/src",
+    "!dist/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build": "test -f dist/bin/tspub.js || node scripts/bootstrap.js && node dist/bin/tspub.js build",
@@ -35,13 +38,14 @@
     "lint": "oxlint src/ bin/ test/",
     "typecheck": "tsc --noEmit",
     "check": "node ./dist/bin/tspub.js check",
-    "prepublishOnly": "npm run build && npm run check",
-    "release:patch": "npm version patch && git push --follow-tags",
-    "release:minor": "npm version minor && git push --follow-tags",
-    "release:major": "npm version major && git push --follow-tags",
+    "prepublishOnly": "pnpm run build && pnpm run check",
+    "release:patch": "pnpm version patch && git push --follow-tags",
+    "release:minor": "pnpm version minor && git push --follow-tags",
+    "release:major": "pnpm version major && git push --follow-tags",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "prepare": "test -d .git && lefthook install || true"
   },
   "keywords": [
     "typescript",
@@ -79,12 +83,20 @@
     "@vercel/og": "^0.6.0",
     "@vitest/coverage-v8": "^3.2.4",
     "fflate": "^0.8.2",
+    "lefthook": "^2.1.1",
     "oxlint": "^1.16.0",
     "typescript": "^5.7.0",
     "vitepress": "^1.6.4",
     "vitest": "^3.0.0"
   },
+  "packageManager": "pnpm@10.28.2",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lefthook"
+    ]
   }
 }

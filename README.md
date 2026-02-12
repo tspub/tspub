@@ -46,7 +46,7 @@ $ npx tspub check
 
 exports/types-order      "types" should be first in conditions
 exports/file-exists      ./dist/index.js doesn't exist
-types/false-esm          types say ESM, but it's actually CJS
+types/false-cjs-esm      types say ESM, but it's actually CJS
 metadata/license         missing license field
 
 4 problems found (3 auto-fixable)
@@ -78,7 +78,7 @@ tspub changeset add            # add a changeset for versioning
 | Category | Count | Examples |
 |:--|:--|:--|
 | exports | 28 | types-first, file-exists, format-mismatch, ESM/CJS conditions |
-| types | 14 | false-esm, false-cjs, resolution failures, missing declarations |
+| types | 14 | false-cjs-esm, resolution failures, missing declarations |
 | metadata | 11 | license, engines, deprecated fields, repository format |
 | files | 10 | sensitive files leaked, wrong shebang, format validation |
 | imports | 6 | import map validation, resolution checks |
@@ -125,7 +125,7 @@ await build({ formats: ["esm", "cjs"] });
 
 ## Requirements
 
-Node 18+, TypeScript 5+ recommended.
+Node 20+, TypeScript 5+ recommended.
 
 ## License
 

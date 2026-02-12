@@ -5,10 +5,10 @@
 ```bash
 git clone https://github.com/tspub/tspub.git
 cd tspub
-npm install
-npm run bootstrap   # needed on fresh clone before first build
-npm run build
-npm test
+pnpm install
+pnpm run bootstrap   # needed on fresh clone before first build
+pnpm run build
+pnpm test
 ```
 
 ## Architecture
@@ -121,16 +121,16 @@ describe("exports/my-rule", () => {
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run specific test file
-npx vitest run test/checker/exports/my-rule.test.ts
+pnpm exec vitest run test/checker/exports/my-rule.test.ts
 
 # Type check
-npm run typecheck
+pnpm run typecheck
 
 # Lint
-npm run lint
+pnpm run lint
 ```
 
 ## Linting & Formatting
@@ -145,7 +145,7 @@ When making changes that affect the published package:
 
 ```bash
 # Create a changeset
-npx tspub changeset add
+pnpm exec tspub changeset add
 # Select bump type (patch/minor/major)
 # Write a summary of the change
 
@@ -159,6 +159,6 @@ git commit -m "feat: add my-rule checker"
 1. Fork and clone
 2. Create a branch: `git checkout -b my-feature`
 3. Make changes
-4. Run `npm test` and `npm run typecheck`
+4. Run `pnpm test` and `pnpm run typecheck`
 5. Add a changeset if applicable
 6. Submit a PR

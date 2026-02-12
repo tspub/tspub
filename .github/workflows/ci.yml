@@ -11,18 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run build
-      - run: npm run test:run
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run typecheck
+      - run: pnpm run build
+      - run: pnpm run test:run
       - run: node ./dist/bin/tspub.js check
 
   ecosystem:
@@ -39,26 +40,81 @@ jobs:
           - { name: superjson, repo: "flightcontrolhq/superjson", ref: "v2.2.2" }
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
       - name: Clone ${{ matrix.target.name }}@${{ matrix.target.ref }}
         run: |
           git clone --depth 1 --branch ${{ matrix.target.ref }} --single-branch \
             https://github.com/${{ matrix.target.repo }}.git \
             /tmp/ecosystem/${{ matrix.target.name }}
       - name: Run tspub check on ${{ matrix.target.name }}
+        id: check
         run: |
-          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
-          if [ -n "${{ matrix.target.dir }}" ]; then
-            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
-          fi
-          node ./dist/bin/tspub.js check 2>&1 || true
+          OUTPUT=$(node ${{ github.workspace }}/dist/bin/tspub.js check 2>&1 || true)
+          echo "$OUTPUT"
+          echo "$OUTPUT" > /tmp/ecosystem-result.txt
         working-directory: ${{ matrix.target.dir && format('/tmp/ecosystem/{0}/{1}', matrix.target.name, matrix.target.dir) || format('/tmp/ecosystem/{0}', matrix.target.name) }}
-        # "|| true" because we expect real-world packages to have issues.
-        # The goal is to verify tspub doesn't crash, not that every package is perfect.
       - name: Run ecosystem test suite for ${{ matrix.target.name }}
-        run: npx vitest run --config vitest.ecosystem.config.ts -t "${{ matrix.target.name }}"
+        run: pnpm exec vitest run --config vitest.ecosystem.config.ts -t "${{ matrix.target.name }}"
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecosystem-${{ matrix.target.name }}
+          path: /tmp/ecosystem-result.txt
+
+  ecosystem-report:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: ecosystem
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ecosystem-*
+          path: results
+      - name: Post PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            let body = '## Ecosystem Check Results\n\n';
+            const dirs = fs.readdirSync('results').sort();
+            for (const dir of dirs) {
+              const name = dir.replace('ecosystem-', '');
+              const file = path.join('results', dir, 'ecosystem-result.txt');
+              if (!fs.existsSync(file)) continue;
+              const content = fs.readFileSync(file, 'utf-8').trim();
+              const passed = content.includes('passed') || content.includes('✓');
+              const icon = passed ? ':white_check_mark:' : ':warning:';
+              body += `<details>\n<summary>${icon} <b>${name}</b></summary>\n\n\`\`\`\n${content}\n\`\`\`\n</details>\n\n`;
+            }
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes('## Ecosystem Check Results'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
