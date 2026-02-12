@@ -11,6 +11,7 @@ export const typesFormatRule: Rule = {
   },
   check(ctx) {
     if (!ctx.pkg.exports || typeof ctx.pkg.exports === "string") return [];
+    const isModuleType = ctx.pkg.type === "module";
     const results: RawDiagnostic[] = [];
 
     function checkConditionMap(
@@ -26,7 +27,9 @@ export const typesFormatRule: Rule = {
         const importObj = obj["import"] as Record<string, unknown>;
         if (typeof importObj["types"] === "string") {
           const typesPath = importObj["types"];
+          // When "type": "module", .d.ts is already interpreted as ESM
           if (
+            !isModuleType &&
             typesPath.endsWith(".d.ts") &&
             !typesPath.endsWith(".d.mts")
           ) {
@@ -41,7 +44,9 @@ export const typesFormatRule: Rule = {
       // Top-level types with both import and require (dual publish)
       if (hasImport && hasRequire && typeof obj["types"] === "string") {
         const typesPath = obj["types"] as string;
+        // When "type": "module", .d.ts is already interpreted as ESM
         if (
+          !isModuleType &&
           typesPath.endsWith(".d.ts") &&
           !typesPath.endsWith(".d.mts") &&
           !typesPath.endsWith(".d.cts")

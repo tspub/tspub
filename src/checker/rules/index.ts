@@ -20,6 +20,7 @@ import { conditionTypesRule } from "./exports/condition-types.js";
 import { noDeprecatedSubpathRule } from "./exports/no-deprecated-subpath-mapping.js";
 import { importsKeyInvalidRule } from "./exports/imports-key-invalid.js";
 import { browserConflictRule } from "./exports/browser-conflict.js";
+import { browserValueConflictRule } from "./exports/browser-value-conflict.js";
 import { fileNotPublishedRule } from "./exports/file-not-published.js";
 import { globMatchedFilesRule } from "./exports/glob-matched-files.js";
 import { cjsEsmoduleInteropRule } from "./exports/cjs-esmodule-interop.js";
@@ -28,6 +29,14 @@ import { typesFirstRule } from "./exports/types-first.js";
 import { esmMainNoExportsRule } from "./exports/esm-main-no-exports.js";
 import { moduleNoExportsRule } from "./exports/module-no-exports.js";
 import { typesNotExportedRule } from "./exports/types-not-exported.js";
+
+// Imports rules
+import { importsDefaultLastRule } from "./imports/default-last.js";
+import { importsModuleEsmOnlyRule } from "./imports/module-esm-only.js";
+import { importsModuleBeforeRequireRule } from "./imports/module-before-require.js";
+import { importsFallbackArrayRule } from "./imports/fallback-array.js";
+import { importsGlobMatchedFilesRule } from "./imports/glob-matched-files.js";
+import { importsNoDeprecatedSubpathRule } from "./imports/no-deprecated-subpath.js";
 
 // Types rules
 import { tsconfigExistsRule } from "./types/tsconfig-exists.js";
@@ -43,6 +52,7 @@ import { falseCjsEsmRule } from "./types/false-cjs-esm.js";
 import { falseExportDefaultRule } from "./types/false-export-default.js";
 import { missingExportEqualsRule } from "./types/missing-export-equals.js";
 import { esmDynamicOnlyRule } from "./types/esm-dynamic-only.js";
+import { cjsResolvesToEsmRule } from "./types/cjs-resolves-esm.js";
 
 // Files rules
 import { filesFieldRule } from "./files/files-field.js";
@@ -66,6 +76,8 @@ import { deprecatedFieldsRule } from "./metadata/deprecated-fields.js";
 import { peerDepConflictRule } from "./metadata/peer-dep-conflict.js";
 import { useExportsBrowserRule } from "./metadata/use-exports-browser.js";
 import { repositoryFormatRule } from "./metadata/repository-format.js";
+import { fieldValueTypeRule } from "./metadata/field-value-type.js";
+import { moduleEsmRule } from "./metadata/module-esm.js";
 
 // Size rules
 import { packageSizeRule } from "./size/package-size.js";
@@ -91,6 +103,7 @@ export const allRules: Rule[] = [
   noDeprecatedSubpathRule,
   importsKeyInvalidRule,
   browserConflictRule,
+  browserValueConflictRule,
   fileNotPublishedRule,
   globMatchedFilesRule,
   cjsEsmoduleInteropRule,
@@ -99,6 +112,14 @@ export const allRules: Rule[] = [
   esmMainNoExportsRule,
   moduleNoExportsRule,
   typesNotExportedRule,
+
+  // Imports
+  importsDefaultLastRule,
+  importsModuleEsmOnlyRule,
+  importsModuleBeforeRequireRule,
+  importsFallbackArrayRule,
+  importsGlobMatchedFilesRule,
+  importsNoDeprecatedSubpathRule,
 
   // Types
   tsconfigExistsRule,
@@ -114,6 +135,7 @@ export const allRules: Rule[] = [
   falseExportDefaultRule,
   missingExportEqualsRule,
   esmDynamicOnlyRule,
+  cjsResolvesToEsmRule,
 
   // Files
   filesFieldRule,
@@ -137,6 +159,8 @@ export const allRules: Rule[] = [
   deprecatedFieldsRule,
   useExportsBrowserRule,
   repositoryFormatRule,
+  fieldValueTypeRule,
+  moduleEsmRule,
 
   // Size
   packageSizeRule,

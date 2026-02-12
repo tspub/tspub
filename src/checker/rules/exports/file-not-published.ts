@@ -23,7 +23,14 @@ function isAlwaysIncluded(filePath: string): boolean {
 function matchesFilesField(filePath: string, filesPatterns: string[]): boolean {
   const normalized = filePath.replace(/^\.\//, "");
   return filesPatterns.some((pattern) => {
-    const p = pattern.replace(/^\.\//, "").replace(/\/\*\*$/, "").replace(/\/\*$/, "");
+    // Strip leading ./ and / (npm treats "/dist" the same as "dist")
+    // Then strip glob suffixes to extract the directory prefix
+    const p = pattern
+      .replace(/^\.?\//, "")
+      .replace(/\/\*\*\/.*$/, "")           // dist/**/!(*.tsbuildinfo) → dist
+      .replace(/\/\*\*$/, "")               // dist/** → dist
+      .replace(/\/\*\.[^/]+$/, "")          // dist/*.js → dist
+      .replace(/\/\*$/, "");                // dist/* → dist
     return normalized === p || normalized.startsWith(p + "/");
   });
 }
