@@ -35,10 +35,10 @@
     "lint": "oxlint src/ bin/ test/",
     "typecheck": "tsc --noEmit",
     "check": "node ./dist/bin/tspub.js check",
-    "prepublishOnly": "npm run build && npm run check",
-    "release:patch": "npm version patch && git push --follow-tags",
-    "release:minor": "npm version minor && git push --follow-tags",
-    "release:major": "npm version major && git push --follow-tags",
+    "prepublishOnly": "pnpm run build && pnpm run check",
+    "release:patch": "pnpm version patch && git push --follow-tags",
+    "release:minor": "pnpm version minor && git push --follow-tags",
+    "release:major": "pnpm version major && git push --follow-tags",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -84,6 +84,7 @@
     "vitepress": "^1.6.4",
     "vitest": "^3.0.0"
   },
+  "packageManager": "pnpm@10.28.2",
   "engines": {
     "node": ">=18.0.0"
   }
