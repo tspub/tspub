@@ -31,6 +31,34 @@ Or specify explicitly:
 tspub build --entry src/index.ts
 ```
 
+### Named Entries
+
+For multiple entry points, use named entries:
+
+```typescript
+export default {
+  build: {
+    entry: {
+      index: "src/index.ts",
+      cli: "src/cli.ts",
+      worker: "src/worker.ts",
+    },
+  },
+};
+```
+
+Or via CLI:
+
+```bash
+tspub build --entry "index=src/index.ts,cli=src/cli.ts"
+```
+
+Named entries produce matching output filenames (`dist/index.js`, `dist/cli.js`, etc.).
+
+### Auto-Splitting
+
+When building multiple entry points as ESM, code splitting is automatically enabled. Shared code between entries is extracted into separate chunks to avoid duplication. You can override this with `splitting: false`.
+
 ## Output
 
 ```

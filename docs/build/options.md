@@ -28,7 +28,7 @@ export default {
 | `sourcemap` | `boolean` | `false` | Generate sourcemaps |
 | `clean` | `boolean` | `true` | Clean outDir before build |
 | `minify` | `boolean` | `false` | Minify output |
-| `splitting` | `boolean` | `false` | Enable code splitting (ESM only) |
+| `splitting` | `boolean` | `false` | Enable code splitting (ESM only, auto-enabled for multi-entry) |
 | `target` | `string` | — | esbuild target (e.g. `"es2022"`, `"node18"`) |
 | `platform` | `"node" \| "browser" \| "neutral"` | — | Target platform |
 | `external` | `(string \| RegExp)[]` | — | Packages to exclude from bundle |
@@ -36,7 +36,7 @@ export default {
 | `define` | `Record<string, string>` | — | Compile-time constants |
 | `banner` | `{ js?: string }` | — | Prepend text to output files |
 | `footer` | `{ js?: string }` | — | Append text to output files |
-| `cjsInterop` | `boolean` | — | Enable CJS interop (no `.default` nonsense) |
+| `cjsInterop` | `boolean` | `true` | Enable CJS interop (consumers don't need `.default`) |
 | `esbuildPlugins` | `Plugin[]` | — | Pass esbuild plugins directly |
 | `loader` | `Record<string, Loader>` | — | Custom esbuild loaders by extension |
 | `replaceNodeEnv` | `boolean` | — | Replace `process.env.NODE_ENV` (auto-enabled when minify is true) |

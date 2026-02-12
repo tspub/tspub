@@ -92,7 +92,7 @@ export default {
 
 ## Auto-Fix
 
-20+ rules support auto-fix:
+14 rules support auto-fix (9 safe, 5 unsafe):
 
 ```bash
 # Safe fixes only

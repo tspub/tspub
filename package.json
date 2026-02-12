@@ -58,11 +58,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anishgiri/tspub.git"
+    "url": "https://github.com/tspub/tspub.git"
   },
-  "homepage": "https://github.com/anishgiri/tspub#readme",
+  "homepage": "https://github.com/tspub/tspub#readme",
   "bugs": {
-    "url": "https://github.com/anishgiri/tspub/issues"
+    "url": "https://github.com/tspub/tspub/issues"
   },
   "sideEffects": false,
   "dependencies": {

@@ -60,7 +60,7 @@ interface TspubBuildConfig {
 | `dtsResolve` | `boolean` | `false` | Resolve external types into bundled `.d.ts` |
 | `sourcemap` | `boolean` | `false` | Generate sourcemaps |
 | `minify` | `boolean` | `false` | Minify output |
-| `splitting` | `boolean` | `false` | Enable code splitting (ESM only) |
+| `splitting` | `boolean` | `false` | Enable code splitting (ESM only, auto-enabled for multi-entry) |
 | `target` | `string` | — | esbuild target (e.g. `"es2022"`, `"node18"`) |
 | `platform` | `"node" \| "browser" \| "neutral"` | — | Target platform |
 | `external` | `(string \| RegExp)[]` | — | Packages to exclude from bundle |
@@ -68,10 +68,10 @@ interface TspubBuildConfig {
 | `define` | `Record<string, string>` | — | Compile-time constants |
 | `banner` | `{ js?: string }` | — | Prepend text to output files |
 | `footer` | `{ js?: string }` | — | Append text to output files |
-| `cjsInterop` | `boolean` | — | Enable CJS interop |
+| `cjsInterop` | `boolean` | `true` | Enable CJS interop (consumers don't need `.default`) |
 | `esbuildPlugins` | `Plugin[]` | — | Pass esbuild plugins directly |
 | `loader` | `Record<string, Loader>` | — | Custom esbuild loaders by extension |
-| `replaceNodeEnv` | `boolean` | — | Replace `process.env.NODE_ENV` (auto when minify is true) |
+| `replaceNodeEnv` | `boolean` | — | Replace `process.env.NODE_ENV` (auto when minify is true). Replaces deprecated `envProduction` |
 | `globalName` | `string` | — | Global variable name for IIFE builds |
 | `onSuccess` | `string \| () => void` | — | Run command/callback after successful build |
 | `treeshake` | `boolean \| object` | — | Esbuild treeshake configuration |

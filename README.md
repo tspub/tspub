@@ -19,7 +19,7 @@
 
 [![npm](https://img.shields.io/npm/v/tspub?style=flat-square&color=cc3534)](https://www.npmjs.com/package/tspub)
 [![downloads](https://img.shields.io/npm/dm/tspub?style=flat-square)](https://www.npmjs.com/package/tspub)
-[![tests](https://img.shields.io/github/actions/workflow/status/anishgiri/tspub/ci.yml?style=flat-square&label=tests)](https://github.com/anishgiri/tspub/actions)
+[![tests](https://img.shields.io/github/actions/workflow/status/tspub/tspub/ci.yml?style=flat-square&label=tests)](https://github.com/tspub/tspub/actions)
 [![coverage](https://img.shields.io/badge/coverage-88%25-brightgreen?style=flat-square)](https://github.com/tspub/tspub)
 [![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 [![docs](https://img.shields.io/badge/docs-tspub.dev-blueviolet?style=flat-square)](https://tspub.dev)

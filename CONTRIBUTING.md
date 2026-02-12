@@ -3,9 +3,10 @@
 ## Setup
 
 ```bash
-git clone https://github.com/anishgiri/tspub.git
+git clone https://github.com/tspub/tspub.git
 cd tspub
 npm install
+npm run bootstrap   # needed on fresh clone before first build
 npm run build
 npm test
 ```

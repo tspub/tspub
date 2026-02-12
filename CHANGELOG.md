@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Plugin system for custom rules (local files or npm packages)
 - Profiles for rule presets (library, app, strict)
 - Browser-safe subset (39 rules) for playground use
-- Publint rule coverage (39 rules mapped) and attw rule coverage (5 rules mapped)
+- Publint rule coverage (39 rules mapped) and attw rule coverage (6 rules mapped)
 
 #### Builder
 - ESM, CJS, and IIFE output formats via esbuild
