@@ -1,6 +1,6 @@
 {
   "name": "@tspub-dev/tspub",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "The unified TypeScript package toolkit — init, build, check, publish in one tool. tspub builds itself.",
   "type": "module",
   "bin": {
