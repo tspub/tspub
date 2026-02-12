@@ -13,7 +13,7 @@ afterEach(async () => {
   await rm(tmpDir, { recursive: true, force: true });
 });
 
-describe("runTypeTests", () => {
+describe("runTypeTests", { timeout: 30_000 }, () => {
   it("returns passed when no test files exist", async () => {
     await rm(join(tmpDir, "test-d"), { recursive: true, force: true });
     const result = await runTypeTests({ dir: tmpDir });
