@@ -125,7 +125,7 @@ await build({ formats: ["esm", "cjs"] });
 
 ## Requirements
 
-Node 18+, TypeScript 5+ recommended.
+Node 20+, TypeScript 5+ recommended.
 
 ## License
 
