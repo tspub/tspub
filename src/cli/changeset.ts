@@ -4,6 +4,7 @@ import { writeChangeset } from "../changeset/writer.js";
 import { consumeChangesets } from "../changeset/version.js";
 import { createSnapshot } from "../changeset/snapshot.js";
 import { parseChangeset } from "../changeset/parser.js";
+import { loadConfig } from "../config/loader.js";
 import { readdir } from "node:fs/promises";
 import { join, basename } from "node:path";
 import { isMonorepoRoot, discoverWorkspaces } from "../workspace/index.js";
@@ -55,7 +56,20 @@ export function registerChangeset(program: Command): void {
         return;
       }
 
-      const { updates, cleanup } = await consumeChangesets(dir);
+      let packageDirs: Map<string, string> | undefined;
+      if (await isMonorepoRoot(dir)) {
+        const workspaces = await discoverWorkspaces(dir);
+        packageDirs = new Map(workspaces.map(w => [w.name, w.dir]));
+      }
+
+      const config = await loadConfig(dir);
+      const csConfig = config?.changeset;
+
+      const { updates, cleanup } = await consumeChangesets(dir, packageDirs, {
+        dependentBumping: csConfig?.dependentBumping,
+        linked: csConfig?.linked,
+        fixed: csConfig?.fixed,
+      });
       if (updates.length === 0) {
         logger.info("No changesets to consume");
         return;

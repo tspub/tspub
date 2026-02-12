@@ -41,6 +41,8 @@ export interface TspubBuildConfig {
   inject?: string[];
   /** Size budget limits — fail build if any file exceeds the limit */
   sizeLimits?: Record<string, string>;
+  /** Inject __dirname/__filename/import.meta.url shims into CJS output (default: true) */
+  shims?: boolean;
 }
 
 export interface TspubPublishConfig {
@@ -52,6 +54,17 @@ export interface TspubPublishConfig {
   ci?: {
     enabled?: boolean;
     skipPush?: boolean;
+  };
+  github?: {
+    release?: boolean;
+    draft?: boolean;
+    assets?: string[];
+  };
+  hooks?: {
+    beforeBuild?: string;
+    afterBuild?: string;
+    beforePublish?: string;
+    afterPublish?: string;
   };
 }
 
@@ -79,6 +92,10 @@ export interface TspubScanConfig {
 export interface TspubChangesetConfig {
   dependentBumping?: "major" | "all" | "none";
   snapshotTag?: string;
+  /** Groups of package names that bump together (highest bump wins) */
+  linked?: string[][];
+  /** Groups of package names that always share the same version */
+  fixed?: string[][];
 }
 
 export interface TspubConfig {

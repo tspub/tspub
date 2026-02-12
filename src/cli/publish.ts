@@ -4,6 +4,7 @@ import { loadConfig } from "../config/loader.js";
 import { isMonorepoRoot } from "../workspace/index.js";
 import { publishPackage, publishMonorepo } from "../publisher/publish.js";
 import { pushWithTags } from "../publisher/git.js";
+import { createHooksFromConfig } from "../publisher/hooks.js";
 import { bumpVersion, bumpPrerelease } from "../publisher/version-bump.js";
 
 export { bumpVersion, bumpPrerelease };
@@ -25,6 +26,8 @@ interface PublishActionOptions {
   changelogStyle?: string;
   ci?: boolean;
   filter?: string;
+  githubRelease?: boolean;
+  yes?: boolean;
 }
 
 export function registerPublish(program: Command): void {
@@ -43,6 +46,9 @@ export function registerPublish(program: Command): void {
     .option("--changelog-style <style>", "Changelog style: simple, conventional, auto", "auto")
     .option("--ci", "CI mode: auto-detect version bump from commits")
     .option("--filter <pattern>", "Filter workspace packages by name pattern")
+    .option("--github-release", "Create a GitHub release (default: auto when GITHUB_TOKEN is set)")
+    .option("--no-github-release", "Skip GitHub release creation")
+    .option("-y, --yes", "Skip confirmation prompt")
     .action(async (bump: string | undefined, options: PublishActionOptions) => {
       const dir = process.cwd();
       const config = await loadConfig(dir);
@@ -59,12 +65,15 @@ export function registerPublish(program: Command): void {
       const registry = options.registry ?? config?.publish?.registry;
       const registryArgs = registry ? ["--registry", registry] : [];
 
+      const hooks = createHooksFromConfig(config?.publish);
+
       // Monorepo support
       if (await isMonorepoRoot(dir)) {
         const results = await publishMonorepo({
           dir,
           bump,
           options,
+          hooks,
         });
         if (results.some((r) => !r.success)) {
           process.exitCode = 1;
@@ -81,6 +90,7 @@ export function registerPublish(program: Command): void {
         isCi,
         registry,
         registryArgs,
+        hooks,
       });
 
       if (!result.success) {
