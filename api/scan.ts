@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, readFileSync, existsSync, readdirSync } from "node:fs";
+import { mkdtempSync, rmSync, readFileSync, existsSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { buildContext } from "../src/checker/framework/context.js";
@@ -32,11 +32,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let repoDir: string | undefined;
 
   try {
-    const cloneUrl = `https://github.com/${repo}.git`;
-
-    // Shallow clone
+    // Download repo tarball via GitHub API (no git binary needed)
     repoDir = mkdtempSync(join(tmpdir(), "tspub-scan-"));
-    execFileSync("git", ["clone", "--depth", "1", cloneUrl, repoDir], {
+    const tarballUrl = `https://api.github.com/repos/${repo}/tarball`;
+    const tarRes = await fetch(tarballUrl, {
+      headers: { "User-Agent": "tspub-scan" },
+      redirect: "follow",
+    });
+    if (!tarRes.ok) {
+      throw new Error(
+        tarRes.status === 404
+          ? `Repository ${repo} not found`
+          : `GitHub API error: ${tarRes.status}`,
+      );
+    }
+    const tarPath = join(repoDir, "repo.tar.gz");
+    writeFileSync(tarPath, Buffer.from(await tarRes.arrayBuffer()));
+    execFileSync("tar", ["xzf", tarPath, "--strip-components=1", "-C", repoDir], {
       stdio: "pipe",
       timeout: 30_000,
     });
