@@ -28,6 +28,32 @@
 
 <br>
 
+## Install
+
+```bash
+npm i -D @tspub-dev/tspub
+```
+
+```bash
+pnpm add -D @tspub-dev/tspub
+```
+
+```bash
+yarn add -D @tspub-dev/tspub
+```
+
+```bash
+bun add -D @tspub-dev/tspub
+```
+
+Or just run directly — no install needed:
+
+```bash
+npx tspub check
+```
+
+<br>
+
 ---
 
 <br>
@@ -318,26 +344,6 @@ tspub init my-package --react  # React + JSX
 <br>
 
 </details>
-
-<br>
-
----
-
-<br>
-
-## Install
-
-```bash
-npm i -D @tspub-dev/tspub    # npm
-pnpm add -D @tspub-dev/tspub  # pnpm
-yarn add -D @tspub-dev/tspub  # yarn
-```
-
-Or just run directly — no install needed:
-
-```bash
-npx tspub check
-```
 
 <br>
 
