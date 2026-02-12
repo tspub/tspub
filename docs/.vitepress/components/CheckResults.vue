@@ -112,7 +112,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="loading" class="loading-skeleton">
+  <div v-if="loading" class="loading-skeleton" role="status" aria-label="Loading results">
     <div class="skeleton-line" style="width: 60%" />
     <div class="skeleton-line" style="width: 80%" />
     <div class="skeleton-line" style="width: 40%" />
@@ -120,12 +120,12 @@ watch(
     <div class="skeleton-line" style="width: 55%" />
   </div>
 
-  <div v-else-if="error" class="error-state">
+  <div v-else-if="error" class="error-state" role="alert">
     <div class="error-title">Error</div>
     <p>{{ error }}</p>
   </div>
 
-  <div v-else-if="data">
+  <div v-else-if="data" aria-live="polite">
     <!-- Header: Score + Package info + Category bars -->
     <div class="check-results-header">
       <div class="left">

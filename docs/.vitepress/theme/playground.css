@@ -83,7 +83,8 @@
   align-items: center;
 }
 
-.check-search .suggestion-item:hover {
+.check-search .suggestion-item:hover,
+.check-search .suggestion-item.active {
   background: var(--vp-c-bg-soft);
 }
 
@@ -94,6 +95,37 @@
 .check-search .suggestion-item .pkg-version {
   font-size: 13px;
   color: var(--vp-c-text-3);
+}
+
+/* ── Quick Picks ── */
+.quick-picks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-picks-label {
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+}
+
+.quick-pick {
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 16px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.quick-pick:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
 }
 
 /* ── Score Ring ── */

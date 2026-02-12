@@ -78,14 +78,14 @@ watch(
 </script>
 
 <template>
-  <div v-if="loading" class="loading-skeleton">
+  <div v-if="loading" class="loading-skeleton" role="status" aria-label="Loading scan results">
     <div class="skeleton-line" style="width: 50%" />
     <div class="skeleton-line" style="width: 80%" />
     <div class="skeleton-line" style="width: 65%" />
     <div class="skeleton-line" style="width: 90%" />
   </div>
 
-  <div v-else-if="error" class="error-state">
+  <div v-else-if="error" class="error-state" role="alert">
     <div class="error-title">Error</div>
     <p>{{ error }}</p>
   </div>

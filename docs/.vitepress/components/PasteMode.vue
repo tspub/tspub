@@ -135,6 +135,7 @@ function copyFixed() {
       v-model="input"
       placeholder="Paste your package.json here..."
       spellcheck="false"
+      aria-label="Package JSON input"
     />
     <div v-if="parseError" class="paste-error">{{ parseError }}</div>
     <div v-else-if="!input.trim()" class="paste-hint">

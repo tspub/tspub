@@ -113,10 +113,13 @@ onMounted(() => {
 <template>
   <div class="playground-hub">
     <!-- Tab bar -->
-    <div class="playground-tabs">
+    <div class="playground-tabs" role="tablist" aria-label="Playground sections">
       <button
         v-for="tab in tabs"
         :key="tab.id"
+        role="tab"
+        :aria-selected="activeTab === tab.id"
+        :aria-controls="`panel-${tab.id}`"
         class="playground-tab"
         :class="{ active: activeTab === tab.id }"
         @click="switchTab(tab.id)"
@@ -126,16 +129,18 @@ onMounted(() => {
     </div>
 
     <!-- CHECK tab -->
-    <div v-if="activeTab === 'check'">
-      <div class="mode-toggle">
+    <div v-if="activeTab === 'check'" id="panel-check" role="tabpanel" aria-label="Check packages">
+      <div class="mode-toggle" role="group" aria-label="Check mode">
         <button
           :class="{ active: checkMode === 'search' }"
+          :aria-pressed="checkMode === 'search'"
           @click="checkMode = 'search'"
         >
           Search npm
         </button>
         <button
           :class="{ active: checkMode === 'paste' }"
+          :aria-pressed="checkMode === 'paste'"
           @click="checkMode = 'paste'"
         >
           Paste package.json
@@ -152,18 +157,18 @@ onMounted(() => {
     </div>
 
     <!-- SCAN tab -->
-    <div v-if="activeTab === 'scan'">
+    <div v-if="activeTab === 'scan'" id="panel-scan" role="tabpanel" aria-label="Scan repositories">
       <ScanInput :initial-repo="scanRepo" @scan="onScan" />
       <ScanReport v-if="scanRepo" :repo="scanRepo" />
     </div>
 
     <!-- INIT tab -->
-    <div v-if="activeTab === 'init'">
+    <div v-if="activeTab === 'init'" id="panel-init" role="tabpanel" aria-label="Initialize project">
       <InitForm />
     </div>
 
     <!-- PIPELINE tab -->
-    <div v-if="activeTab === 'pipeline'">
+    <div v-if="activeTab === 'pipeline'" id="panel-pipeline" role="tabpanel" aria-label="Publish pipeline">
       <PipelineViz />
     </div>
   </div>

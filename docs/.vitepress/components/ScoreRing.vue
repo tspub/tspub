@@ -35,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="score-ring" :style="{ width: sz + 'px', height: sz + 'px' }">
+  <div class="score-ring" role="img" :aria-label="`Score: ${score} out of 100, grade ${grade}`" :style="{ width: sz + 'px', height: sz + 'px' }">
     <svg
       :width="sz"
       :height="sz"

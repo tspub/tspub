@@ -101,24 +101,25 @@ function generate() {
   <div>
     <div class="init-form">
       <div class="form-group">
-        <label>Package name</label>
-        <input v-model="name" type="text" placeholder="my-awesome-lib" />
+        <label for="init-name">Package name</label>
+        <input id="init-name" v-model="name" type="text" placeholder="my-awesome-lib" />
       </div>
       <div class="form-group">
-        <label>Description</label>
+        <label for="init-desc">Description</label>
         <input
+          id="init-desc"
           v-model="description"
           type="text"
           placeholder="A utility library for..."
         />
       </div>
       <div class="form-group">
-        <label>Author</label>
-        <input v-model="author" type="text" placeholder="Your Name" />
+        <label for="init-author">Author</label>
+        <input id="init-author" v-model="author" type="text" placeholder="Your Name" />
       </div>
       <div class="form-group">
-        <label>Module format</label>
-        <div class="radio-group">
+        <label id="format-label">Module format</label>
+        <div class="radio-group" role="radiogroup" aria-labelledby="format-label">
           <label>
             <input type="radio" :value="false" v-model="dualPublish" />
             ESM only (recommended)
@@ -136,8 +137,8 @@ function generate() {
         </label>
       </div>
       <div class="form-group">
-        <label>License</label>
-        <div class="radio-group">
+        <label id="license-label">License</label>
+        <div class="radio-group" role="radiogroup" aria-labelledby="license-label">
           <label>
             <input type="radio" value="MIT" v-model="license" />
             MIT
