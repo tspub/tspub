@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { readPackageJson, writePackageJson } from "../shared/package-json.js";
 import { build } from "../builder/index.js";
 import { generateChangelog } from "../builder/changelog.js";
@@ -10,6 +11,7 @@ import { commitRelease, commitMonorepoRelease, tagRelease, pushWithTags, rollbac
 import { npmPublish } from "./npm.js";
 import { allPrereqs } from "./prereqs/index.js";
 import { runHook } from "./hooks.js";
+import { createGitHubRelease, parseGitHubRepo, extractReleaseNotes } from "./github.js";
 import { logger } from "../shared/logger.js";
 import type { PublishOptions, PublishResult } from "./types.js";
 import type { PrereqDiagnostic, PrereqContext } from "./framework/types.js";
@@ -17,6 +19,16 @@ import type { PublishHooks } from "./hooks.js";
 import type { TspubConfig } from "../config/types.js";
 
 const VALID_CHANGELOG_STYLES = new Set<string>(["simple", "conventional", "auto"]);
+
+function shouldCreateGitHubRelease(
+  options: PublishOptions,
+  config: TspubConfig | null,
+): boolean {
+  if (options.githubRelease === false) return false;
+  if (options.githubRelease === true) return true;
+  if (config?.publish?.github?.release === false) return false;
+  return !!(process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN);
+}
 
 export interface PublishPackageParams {
   dir: string;
@@ -103,6 +115,32 @@ export async function publishPackage(params: PublishPackageParams): Promise<Publ
     logger.info(`${label}Auto-detected bump: ${bump} (${versionBump.reason})`);
   }
 
+  // Interactive confirmation — before any mutations (build, version bump, changelog, git)
+  if (!options.dryRun && !options.yes && !isCi && process.stdin.isTTY) {
+    const prereleaseTag = options.prerelease;
+    const previewVersion = prereleaseTag
+      ? bumpPrerelease(oldVersion, prereleaseTag, bump)
+      : bumpVersion(oldVersion, bump ?? "patch");
+    const prompts = (await import("prompts")).default;
+    const { confirmed } = await prompts({
+      type: "confirm",
+      name: "confirmed",
+      message: `Publish ${pkg.name}@${previewVersion} to ${registry ?? "npm"}?`,
+      initial: true,
+    });
+    if (!confirmed) {
+      logger.info(`${label}Publish cancelled`);
+      return {
+        success: false,
+        name: pkg.name ?? "",
+        version: oldVersion,
+        oldVersion,
+        reason: "cancelled",
+        prereqDiagnostics: [],
+      };
+    }
+  }
+
   // Build
   await runHook(hooks, "beforeBuild", { dir });
   logger.info(`${label}Building...`);
@@ -137,6 +175,7 @@ export async function publishPackage(params: PublishPackageParams): Promise<Publ
     dtsBundle: buildConfig?.dtsBundle,
     dtsResolve: buildConfig?.dtsResolve,
     sizeLimits: buildConfig?.sizeLimits,
+    shims: buildConfig?.shims,
   });
   await runHook(hooks, "afterBuild", { dir });
 
@@ -206,6 +245,34 @@ export async function publishPackage(params: PublishPackageParams): Promise<Publ
   const { ok, error } = npmPublish(dir, publishArgs);
   if (ok) {
     logger.success(`${label}Published ${pkg.name}@${newVersion}`);
+
+    if (shouldCreateGitHubRelease(options, config)) {
+      const token = process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN;
+      const repoInfo = parseGitHubRepo(pkg);
+      if (token && repoInfo) {
+        const notes = extractReleaseNotes(join(dir, "CHANGELOG.md"), newVersion);
+        const ghConfig = config?.publish?.github;
+        const ghResult = await createGitHubRelease({
+          owner: repoInfo.owner,
+          repo: repoInfo.repo,
+          tag: `v${newVersion}`,
+          name: `v${newVersion}`,
+          body: notes,
+          prerelease: !!options.prerelease,
+          token,
+          draft: ghConfig?.draft,
+          assets: ghConfig?.assets,
+          assetDir: dir,
+        });
+        if (ghResult.ok) {
+          logger.info(`${label}GitHub release: ${ghResult.url}`);
+          if (ghResult.error) logger.warn(`${label}${ghResult.error}`);
+        } else {
+          logger.warn(`${label}GitHub release failed: ${ghResult.error}`);
+        }
+      }
+    }
+
     await runHook(hooks, "afterPublish", { dir, version: newVersion, success: true });
     return {
       success: true,
@@ -296,6 +363,30 @@ export async function publishMonorepo(params: PublishMonorepoParams): Promise<Pu
       }
     } catch {
       logger.warn("Git operations failed");
+    }
+  }
+
+  // GitHub releases for each published package
+  if (published.length > 0 && shouldCreateGitHubRelease(options, config)) {
+    const token = process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN;
+    const rootPkg = await readPackageJson(dir);
+    const repoInfo = parseGitHubRepo(rootPkg);
+    if (token && repoInfo) {
+      for (const p of published) {
+        const notes = extractReleaseNotes(join(p.dir, "CHANGELOG.md"), p.version);
+        const tag = `${p.name}@${p.version}`;
+        const ghResult = await createGitHubRelease({
+          owner: repoInfo.owner,
+          repo: repoInfo.repo,
+          tag,
+          name: tag,
+          body: notes,
+          prerelease: !!options.prerelease,
+          token,
+        });
+        if (ghResult.ok) logger.info(`[${p.name}] GitHub release: ${ghResult.url}`);
+        else logger.warn(`[${p.name}] GitHub release failed: ${ghResult.error}`);
+      }
     }
   }
 

@@ -48,6 +48,8 @@ export interface BuildOptions {
   legacy?: boolean;
   /** Size budget limits — fail build if exceeded (gzip size) */
   sizeLimits?: Record<string, string>;
+  /** Inject __dirname/__filename/import.meta.url shims into CJS output (default: true) */
+  shims?: boolean;
 }
 
 export async function build(options: BuildOptions): Promise<void> {
@@ -127,6 +129,7 @@ export async function build(options: BuildOptions): Promise<void> {
     publicDir: options.publicDir,
     inject: options.inject,
     sizeLimits: options.sizeLimits,
+    shims: options.shims,
   });
 }
 

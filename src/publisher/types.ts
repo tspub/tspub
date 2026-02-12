@@ -13,6 +13,8 @@ export interface PublishOptions {
   changelogStyle?: string;
   ci?: boolean;
   filter?: string;
+  githubRelease?: boolean;
+  yes?: boolean;
 }
 
 export interface PublishResult {

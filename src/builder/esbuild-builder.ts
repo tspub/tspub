@@ -6,6 +6,7 @@ import { execFile } from "node:child_process";
 import { stripJsonComments } from "../shared/strip-json-comments.js";
 import { resolveExternals } from "./externals.js";
 import { cjsInteropPlugin } from "./cjs-interop.js";
+import { shimsPlugin } from "./shims-plugin.js";
 import { createPluginContainer, type TspubBuildPlugin, type OutputFile } from "./plugins.js";
 import { generateDts } from "./dts.js";
 import { bundleDts } from "./dts-bundle.js";
@@ -46,6 +47,7 @@ export interface EsbuildBuildOptions {
   publicDir?: string;
   inject?: string[];
   sizeLimits?: Record<string, string>;
+  shims?: boolean;
 }
 
 export interface BuildResult {
@@ -153,6 +155,10 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
 
     if (!isESM && !isIIFE && cjsInterop) {
       esbuildPlugins.push(cjsInteropPlugin());
+    }
+
+    if (!isESM && !isIIFE && (options.shims ?? true)) {
+      esbuildPlugins.push(shimsPlugin());
     }
 
     esbuildPlugins.push(...userEsbuildPlugins);
