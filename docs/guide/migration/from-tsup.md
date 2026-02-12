@@ -6,7 +6,7 @@ tspub uses esbuild under the hood — switching from tsup is straightforward.
 
 ```bash
 npm uninstall tsup
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 ## Step 2: Replace Config

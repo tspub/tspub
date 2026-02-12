@@ -6,7 +6,7 @@ tspub's changeset system mirrors the `@changesets/cli` workflow. Switching is se
 
 ```bash
 npm uninstall @changesets/cli
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 ## Step 2: Keep Your .changeset Directory

@@ -244,19 +244,19 @@ npx tspub publish patch
 ::: code-group
 
 ```bash [npm]
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 ```bash [pnpm]
-pnpm add -D tspub
+pnpm add -D @tspub-dev/tspub
 ```
 
 ```bash [yarn]
-yarn add -D tspub
+yarn add -D @tspub-dev/tspub
 ```
 
 ```bash [bun]
-bun add -D tspub
+bun add -D @tspub-dev/tspub
 ```
 
 :::

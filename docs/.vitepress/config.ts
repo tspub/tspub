@@ -170,7 +170,7 @@ export default defineConfig({
     },
     socialLinks: [
       { icon: "github", link: "https://github.com/tspub/tspub" },
-      { icon: "npm", link: "https://www.npmjs.com/package/tspub" },
+      { icon: "npm", link: "https://www.npmjs.com/package/@tspub-dev/tspub" },
     ],
     editLink: {
       pattern: "https://github.com/tspub/tspub/edit/main/docs/:path",

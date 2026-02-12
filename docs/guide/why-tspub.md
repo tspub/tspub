@@ -19,7 +19,7 @@ That's **7 tools to install, configure, and keep in sync**. Each has its own con
 tspub is a single dependency that replaces all of them:
 
 ```bash
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 | What you needed | What tspub provides |

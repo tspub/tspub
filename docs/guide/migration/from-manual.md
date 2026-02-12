@@ -5,7 +5,7 @@ If you're manually configuring `tsc`, `package.json`, and `npm publish`, tspub a
 ## Step 1: Install
 
 ```bash
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 ## Step 2: Run Doctor

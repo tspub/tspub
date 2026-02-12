@@ -5,7 +5,7 @@ All tspub functionality is available as a JavaScript API.
 ## Installation
 
 ```bash
-npm install tspub
+npm install @tspub-dev/tspub
 ```
 
 ## Core Functions

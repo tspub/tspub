@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [npm]
-npm install -D tspub
+npm install -D @tspub-dev/tspub
 ```
 
 ```bash [pnpm]
-pnpm add -D tspub
+pnpm add -D @tspub-dev/tspub
 ```
 
 ```bash [yarn]
-yarn add -D tspub
+yarn add -D @tspub-dev/tspub
 ```
 
 :::
