@@ -1,6 +1,10 @@
 import { defineConfig } from "vitepress";
+import { devApiPlugin } from "./dev-api-plugin";
 
 export default defineConfig({
+  vite: {
+    plugins: [devApiPlugin()],
+  },
   title: "tspub",
   description:
     "The unified TypeScript package toolkit — init, build, check, publish in one tool",
@@ -19,7 +23,7 @@ export default defineConfig({
       {
         property: "og:description",
         content:
-          "Init, build, check, and publish TypeScript packages with one tool. 60 lint rules, changeset versioning, type testing, and more.",
+          "Init, build, check, and publish TypeScript packages with one tool. 70 lint rules, changeset versioning, type testing, and more.",
       },
     ],
     ["meta", { property: "og:type", content: "website" }],
@@ -82,6 +86,7 @@ export default defineConfig({
           items: [
             { text: "All Rules", link: "/check/rules/" },
             { text: "exports", link: "/check/rules/exports/" },
+            { text: "imports", link: "/check/rules/imports/" },
             { text: "types", link: "/check/rules/types/" },
             { text: "files", link: "/check/rules/files/" },
             { text: "metadata", link: "/check/rules/metadata/" },

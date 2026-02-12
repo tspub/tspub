@@ -24,5 +24,20 @@
       "destination": "/:path*",
       "permanent": true
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/check/:pkg*",
+      "destination": "/playground"
+    },
+    {
+      "source": "/scan/:path*",
+      "destination": "/playground"
+    }
+  ],
+  "functions": {
+    "api/scan.ts": {
+      "maxDuration": 60
+    }
+  }
 }
