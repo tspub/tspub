@@ -23,9 +23,9 @@ describe("doctor: environment checks", () => {
     it("returns error when Node version is too old", () => {
       const diags = checkNodeVersion({ engines: { node: ">=99.0.0" } });
       expect(diags).toHaveLength(1);
-      expect(diags[0].severity).toBe("error");
-      expect(diags[0].message).toContain("does not satisfy");
-      expect(diags[0].category).toBe("environment");
+      expect(diags[0]!.severity).toBe("error");
+      expect(diags[0]!.message).toContain("does not satisfy");
+      expect(diags[0]!.category).toBe("environment");
     });
 
     it("handles malformed engines.node string", () => {
@@ -38,9 +38,9 @@ describe("doctor: environment checks", () => {
     it("returns info with npm version", () => {
       const diags = checkNpmVersion();
       expect(diags).toHaveLength(1);
-      expect(diags[0].severity).toBe("info");
-      expect(diags[0].message).toContain("npm version");
-      expect(diags[0].category).toBe("environment");
+      expect(diags[0]!.severity).toBe("info");
+      expect(diags[0]!.message).toContain("npm version");
+      expect(diags[0]!.category).toBe("environment");
     });
   });
 
@@ -52,8 +52,8 @@ describe("doctor: environment checks", () => {
     it("warns on TypeScript 4.x", () => {
       const diags = checkTypeScriptVersion({ devDependencies: { typescript: "^4.9.0" } });
       expect(diags).toHaveLength(1);
-      expect(diags[0].severity).toBe("warning");
-      expect(diags[0].message).toContain("outdated");
+      expect(diags[0]!.severity).toBe("warning");
+      expect(diags[0]!.message).toContain("outdated");
     });
 
     it("passes for TypeScript 5.x", () => {
@@ -63,7 +63,7 @@ describe("doctor: environment checks", () => {
     it("checks dependencies too, not just devDependencies", () => {
       const diags = checkTypeScriptVersion({ dependencies: { typescript: "^4.0.0" } });
       expect(diags).toHaveLength(1);
-      expect(diags[0].severity).toBe("warning");
+      expect(diags[0]!.severity).toBe("warning");
     });
   });
 
@@ -94,8 +94,8 @@ describe("doctor: environment checks", () => {
       await writeFile(join(tmpPm, "yarn.lock"), "");
       const diags = await checkPackageManager(tmpPm);
       expect(diags).toHaveLength(1);
-      expect(diags[0].severity).toBe("warning");
-      expect(diags[0].message).toContain("Multiple lock files");
+      expect(diags[0]!.severity).toBe("warning");
+      expect(diags[0]!.message).toContain("Multiple lock files");
     });
   });
 

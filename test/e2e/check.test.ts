@@ -80,10 +80,10 @@ describe("E2E: Check Features", () => {
     expect(parsed).toHaveLength(results.length);
 
     for (let i = 0; i < parsed.length; i++) {
-      expect(parsed[i].severity).toBe(results[i].severity);
-      expect(parsed[i].message).toBe(results[i].message);
-      if (results[i].ruleId) {
-        expect(parsed[i].ruleId).toBe(results[i].ruleId);
+      expect(parsed[i]!.severity).toBe(results[i]!.severity);
+      expect(parsed[i]!.message).toBe(results[i]!.message);
+      if (results[i]!.ruleId) {
+        expect(parsed[i]!.ruleId).toBe(results[i]!.ruleId);
       }
     }
   });

@@ -16,8 +16,8 @@ vi.mock("../../../src/checker/rules/utils/format-detection.js", async (importOri
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: true, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("files/bin-shebang", () => {
-  it("warns when bin file has no shebang", () => {
-    const results = binShebangRule.check({
+  it("warns when bin file has no shebang", async () => {
+    const results = await binShebangRule.check({
       ...baseCtx,
       pkg: { bin: { tspub: "./no-shebang.js" } },
     });
@@ -26,21 +26,21 @@ describe("files/bin-shebang", () => {
     expect(results[0]!.message).toContain("shebang");
   });
 
-  it("passes when bin file has shebang", () => {
-    const results = binShebangRule.check({
+  it("passes when bin file has shebang", async () => {
+    const results = await binShebangRule.check({
       ...baseCtx,
       pkg: { bin: { tspub: "./with-shebang.js" } },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no bin field", () => {
-    const results = binShebangRule.check({ ...baseCtx, pkg: {} });
+  it("passes when no bin field", async () => {
+    const results = await binShebangRule.check({ ...baseCtx, pkg: {} });
     expect(results).toHaveLength(0);
   });
 
-  it("skips when no build output", () => {
-    const results = binShebangRule.check({
+  it("skips when no build output", async () => {
+    const results = await binShebangRule.check({
       ...baseCtx,
       hasBuildOutput: false,
       pkg: { bin: { tspub: "./no-shebang.js" } },
@@ -48,8 +48,8 @@ describe("files/bin-shebang", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("handles string bin field", () => {
-    const results = binShebangRule.check({
+  it("handles string bin field", async () => {
+    const results = await binShebangRule.check({
       ...baseCtx,
       pkg: { name: "tspub", bin: "./no-shebang.js" },
     });

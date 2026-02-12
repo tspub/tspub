@@ -45,7 +45,7 @@ describe("E2E: Workspace Features", () => {
     const packages = await discoverWorkspaces(fixture("monorepo"));
     const filtered = filterPackages(packages, "@monorepo/core");
     expect(filtered).toHaveLength(1);
-    expect(filtered[0].name).toBe("@monorepo/core");
+    expect(filtered[0]!.name).toBe("@monorepo/core");
   });
 
   it("filterPackages with glob pattern matches multiple packages", async () => {

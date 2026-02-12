@@ -4,8 +4,8 @@ import { typesNotExportedRule } from "../../../src/checker/rules/exports/types-n
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: false, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("exports/types-not-exported", () => {
-  it("warns when types field exists but exports has no types condition", () => {
-    const results = typesNotExportedRule.check({
+  it("warns when types field exists but exports has no types condition", async () => {
+    const results = await typesNotExportedRule.check({
       ...baseCtx,
       pkg: {
         types: "./dist/index.d.ts",
@@ -19,8 +19,8 @@ describe("exports/types-not-exported", () => {
     expect(results[0]!.message).toContain("types");
   });
 
-  it("passes when exports includes types condition", () => {
-    const results = typesNotExportedRule.check({
+  it("passes when exports includes types condition", async () => {
+    const results = await typesNotExportedRule.check({
       ...baseCtx,
       pkg: {
         types: "./dist/index.d.ts",
@@ -32,8 +32,8 @@ describe("exports/types-not-exported", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no types field at all", () => {
-    const results = typesNotExportedRule.check({
+  it("passes when no types field at all", async () => {
+    const results = await typesNotExportedRule.check({
       ...baseCtx,
       pkg: {
         exports: { ".": { import: "./dist/index.js" } },
@@ -42,16 +42,16 @@ describe("exports/types-not-exported", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no exports field", () => {
-    const results = typesNotExportedRule.check({
+  it("passes when no exports field", async () => {
+    const results = await typesNotExportedRule.check({
       ...baseCtx,
       pkg: { types: "./dist/index.d.ts" },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("warns when typings field exists but no types condition", () => {
-    const results = typesNotExportedRule.check({
+  it("warns when typings field exists but no types condition", async () => {
+    const results = await typesNotExportedRule.check({
       ...baseCtx,
       pkg: {
         typings: "./dist/index.d.ts",

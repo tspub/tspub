@@ -32,8 +32,8 @@ describe("size/package-size", () => {
     const ctx = await buildContext({}, testDir);
     const diags = await packageSizeRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].severity).toBe("warning");
-    expect(diags[0].message).toContain("MB");
+    expect(diags[0]!.severity).toBe("warning");
+    expect(diags[0]!.message).toContain("MB");
   });
 
   it("skips when no dist directory", async () => {

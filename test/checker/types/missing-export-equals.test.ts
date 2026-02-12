@@ -17,13 +17,13 @@ beforeEach(() => {
 });
 
 describe("types/missing-export-equals", () => {
-  it("reports info when JS uses module.exports but types lack export =", () => {
+  it("reports info when JS uses module.exports but types lack export =", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "export declare function main(): void;";
       if (path.endsWith(".cjs")) return "module.exports = function main() {};";
       return null;
     });
-    const results = missingExportEqualsRule.check({
+    const results = await missingExportEqualsRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -39,13 +39,13 @@ describe("types/missing-export-equals", () => {
     expect(results[0]!.message).toContain("export =");
   });
 
-  it("passes when types have export =", () => {
+  it("passes when types have export =", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "declare function main(): void;\nexport = main;";
       if (path.endsWith(".cjs")) return "module.exports = function main() {};";
       return null;
     });
-    const results = missingExportEqualsRule.check({
+    const results = await missingExportEqualsRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -59,13 +59,13 @@ describe("types/missing-export-equals", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips when JS doesn't use module.exports =", () => {
+  it("skips when JS doesn't use module.exports =", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "export declare function main(): void;";
       if (path.endsWith(".cjs")) return "exports.main = function main() {};";
       return null;
     });
-    const results = missingExportEqualsRule.check({
+    const results = await missingExportEqualsRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -79,9 +79,9 @@ describe("types/missing-export-equals", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips import conditions", () => {
+  it("skips import conditions", async () => {
     vi.mocked(readFileSafe).mockReturnValue("module.exports = {};");
-    const results = missingExportEqualsRule.check({
+    const results = await missingExportEqualsRule.check({
       ...baseCtx,
       pkg: {
         exports: {

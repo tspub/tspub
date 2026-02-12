@@ -17,10 +17,10 @@ describe("changeset: parser", () => {
 ---
 
 Added a new feature`;
-    const result = parseChangesetContent(content);
+    const result = parseChangesetContent(content, "test-changeset");
     expect(result.entries).toHaveLength(1);
-    expect(result.entries[0].packageName).toBe("my-pkg");
-    expect(result.entries[0].bump).toBe("minor");
+    expect(result.entries[0]!.packageName).toBe("my-pkg");
+    expect(result.entries[0]!.bump).toBe("minor");
     expect(result.summary).toBe("Added a new feature");
   });
 
@@ -31,12 +31,12 @@ Added a new feature`;
 ---
 
 Breaking change in pkg-a, fix in pkg-b`;
-    const result = parseChangesetContent(content);
+    const result = parseChangesetContent(content, "test-changeset");
     expect(result.entries).toHaveLength(2);
-    expect(result.entries[0].packageName).toBe("pkg-a");
-    expect(result.entries[0].bump).toBe("major");
-    expect(result.entries[1].packageName).toBe("pkg-b");
-    expect(result.entries[1].bump).toBe("patch");
+    expect(result.entries[0]!.packageName).toBe("pkg-a");
+    expect(result.entries[0]!.bump).toBe("major");
+    expect(result.entries[1]!.packageName).toBe("pkg-b");
+    expect(result.entries[1]!.bump).toBe("patch");
   });
 
   it("parseChangesetContent accepts id parameter", () => {
@@ -47,7 +47,7 @@ Breaking change in pkg-a, fix in pkg-b`;
 
   it("parseChangesetContent handles empty summary", () => {
     const content = '---\n"pkg": patch\n---\n';
-    const result = parseChangesetContent(content);
+    const result = parseChangesetContent(content, "test-changeset");
     expect(result.summary).toBe("");
   });
 
@@ -62,7 +62,7 @@ Breaking change in pkg-a, fix in pkg-b`;
     await writeFile(filePath, `---\n"my-pkg": patch\n---\n\nFix bug`);
     const result = await parseChangeset(filePath);
     expect(result.entries).toHaveLength(1);
-    expect(result.entries[0].bump).toBe("patch");
+    expect(result.entries[0]!.bump).toBe("patch");
     expect(result.summary).toBe("Fix bug");
     expect(result.id).toBe("test");
   });

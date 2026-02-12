@@ -17,10 +17,10 @@ beforeEach(() => {
 });
 
 describe("types/false-cjs-esm", () => {
-  it("detects FalseCJS — types declare CJS but JS is ESM", () => {
+  it("detects FalseCJS — types declare CJS but JS is ESM", async () => {
     vi.mocked(readFileSafe).mockReturnValue("export const x = 1;");
     vi.mocked(getCodeFormat).mockReturnValue("esm");
-    const results = falseCjsEsmRule.check({
+    const results = await falseCjsEsmRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -36,10 +36,10 @@ describe("types/false-cjs-esm", () => {
     expect(results[0]!.message).toContain("FalseCJS");
   });
 
-  it("detects FalseESM — types declare ESM but JS is CJS", () => {
+  it("detects FalseESM — types declare ESM but JS is CJS", async () => {
     vi.mocked(readFileSafe).mockReturnValue("module.exports = {};");
     vi.mocked(getCodeFormat).mockReturnValue("cjs");
-    const results = falseCjsEsmRule.check({
+    const results = await falseCjsEsmRule.check({
       ...baseCtx,
       pkg: {
         type: "module",
@@ -56,10 +56,10 @@ describe("types/false-cjs-esm", () => {
     expect(results[0]!.message).toContain("FalseESM");
   });
 
-  it("passes when formats match", () => {
+  it("passes when formats match", async () => {
     vi.mocked(readFileSafe).mockReturnValue("export const x = 1;");
     vi.mocked(getCodeFormat).mockReturnValue("esm");
-    const results = falseCjsEsmRule.check({
+    const results = await falseCjsEsmRule.check({
       ...baseCtx,
       pkg: {
         type: "module",
@@ -74,8 +74,8 @@ describe("types/false-cjs-esm", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips when no build output", () => {
-    const results = falseCjsEsmRule.check({
+  it("skips when no build output", async () => {
+    const results = await falseCjsEsmRule.check({
       ...baseCtx,
       hasBuildOutput: false,
       pkg: {
@@ -87,10 +87,10 @@ describe("types/false-cjs-esm", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips unknown format", () => {
+  it("skips unknown format", async () => {
     vi.mocked(readFileSafe).mockReturnValue("// nothing");
     vi.mocked(getCodeFormat).mockReturnValue("unknown");
-    const results = falseCjsEsmRule.check({
+    const results = await falseCjsEsmRule.check({
       ...baseCtx,
       pkg: {
         exports: {

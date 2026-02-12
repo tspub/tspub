@@ -119,7 +119,7 @@ describe("check --fix", () => {
 
     await check({ dir: testDir, fix: true, unsafe: true, strict: false });
     const fixed = await readPackageJson(testDir);
-    const dot = (fixed.exports as Record<string, Record<string, unknown>>)["."];
+    const dot = (fixed.exports as Record<string, Record<string, unknown>>)["."]!;
     expect(dot["import"]).toBeDefined();
     expect(dot["require"]).toBe("./dist/index.cjs");
   });
@@ -137,7 +137,7 @@ describe("check --fix", () => {
 
     await check({ dir: testDir, fix: true, strict: false });
     const fixed = await readPackageJson(testDir);
-    const dot = (fixed.exports as Record<string, Record<string, string>>)["."];
+    const dot = (fixed.exports as Record<string, Record<string, string>>)["."]!;
     const keys = Object.keys(dot);
     expect(keys.indexOf("types")).toBeLessThan(keys.indexOf("import"));
   });
@@ -157,7 +157,7 @@ describe("check --fix", () => {
 
     await check({ dir: testDir, fix: true, strict: false });
     const fixed = await readPackageJson(testDir);
-    const importCond = (fixed.exports as Record<string, Record<string, Record<string, string>>>)["."]["import"];
+    const importCond = (fixed.exports as Record<string, Record<string, Record<string, string>>>)["."]!["import"]!;
     const keys = Object.keys(importCond);
     expect(keys.indexOf("types")).toBeLessThan(keys.indexOf("default"));
   });
@@ -236,9 +236,9 @@ describe("check --fix", () => {
     await check({ dir: testDir, fix: true, unsafe: true, strict: false });
     const fixed = await readPackageJson(testDir);
     expect(fixed.exports).toBeDefined();
-    const dot = (fixed.exports as Record<string, Record<string, Record<string, string>>>)["."];
+    const dot = (fixed.exports as Record<string, Record<string, Record<string, string>>>)["."]!;
     // Should have inferred paths from distFiles
-    expect(dot.import.default).toBe("./dist/index.mjs");
-    expect(dot.import.types).toBe("./dist/index.d.mts");
+    expect(dot.import!.default).toBe("./dist/index.mjs");
+    expect(dot.import!.types).toBe("./dist/index.d.mts");
   });
 });

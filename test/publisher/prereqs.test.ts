@@ -3,6 +3,7 @@ import type { Mock } from "vitest";
 import { dirtyTreeRule } from "../../src/publisher/prereqs/dirty-tree.js";
 import { branchRule } from "../../src/publisher/prereqs/branch.js";
 import { registryPingRule, registryAuthRule } from "../../src/publisher/prereqs/registry.js";
+import { checkerPassRule } from "../../src/publisher/prereqs/checker.js";
 import type { PrereqContext } from "../../src/publisher/framework/types.js";
 
 vi.mock("../../src/publisher/git.js", () => ({
@@ -15,25 +16,33 @@ vi.mock("../../src/publisher/npm.js", () => ({
   checkAuth: vi.fn(),
 }));
 
+vi.mock("../../src/checker/index.js", () => ({
+  check: vi.fn(),
+}));
+
 describe("publisher prereqs", () => {
   let checkDirtyTree: Mock;
   let checkBranch: Mock;
   let pingRegistry: Mock;
   let checkAuth: Mock;
+  let checkFn: Mock;
 
   beforeEach(async () => {
     const git = await import("../../src/publisher/git.js");
     const npm = await import("../../src/publisher/npm.js");
+    const checker = await import("../../src/checker/index.js");
 
     checkDirtyTree = git.checkDirtyTree as Mock;
     checkBranch = git.checkBranch as Mock;
     pingRegistry = npm.pingRegistry as Mock;
     checkAuth = npm.checkAuth as Mock;
+    checkFn = checker.check as Mock;
 
     checkDirtyTree.mockClear();
     checkBranch.mockClear();
     pingRegistry.mockClear();
     checkAuth.mockClear();
+    checkFn.mockClear();
   });
 
   afterEach(() => {
@@ -76,7 +85,7 @@ describe("publisher prereqs", () => {
       const diagnostics = await dirtyTreeRule.check(ctx);
 
       expect(diagnostics).toHaveLength(1);
-      expect(diagnostics[0]).toEqual({
+      expect(diagnostics[0]!).toEqual({
         severity: "error",
         message: "Working tree is dirty. Commit or stash changes before publishing.",
         ruleId: "prereq/clean-tree",
@@ -89,7 +98,7 @@ describe("publisher prereqs", () => {
       const diagnostics = await dirtyTreeRule.check(ctx);
 
       expect(diagnostics).toHaveLength(1);
-      expect(diagnostics[0]).toEqual({
+      expect(diagnostics[0]!).toEqual({
         severity: "warning",
         message: "Not a git repository — skipping git checks",
         ruleId: "prereq/clean-tree",
@@ -129,7 +138,7 @@ describe("publisher prereqs", () => {
       const diagnostics = await branchRule.check(ctx);
 
       expect(diagnostics).toHaveLength(1);
-      expect(diagnostics[0]).toEqual({
+      expect(diagnostics[0]!).toEqual({
         severity: "error",
         message: 'Current branch "feature/test" is not allowed. Expected: main, master',
         ruleId: "prereq/allowed-branch",
@@ -183,7 +192,7 @@ describe("publisher prereqs", () => {
       const diagnostics = await registryPingRule.check(ctx);
 
       expect(diagnostics).toHaveLength(1);
-      expect(diagnostics[0]).toEqual({
+      expect(diagnostics[0]!).toEqual({
         severity: "error",
         message: "Cannot reach npm registry. Check your connection.",
         ruleId: "prereq/registry-reachable",
@@ -228,7 +237,7 @@ describe("publisher prereqs", () => {
       const diagnostics = await registryAuthRule.check(ctx);
 
       expect(diagnostics).toHaveLength(1);
-      expect(diagnostics[0]).toEqual({
+      expect(diagnostics[0]!).toEqual({
         severity: "error",
         message: "Not authenticated with npm. Run `npm login` first.",
         ruleId: "prereq/registry-authenticated",
@@ -246,6 +255,80 @@ describe("publisher prereqs", () => {
         "--registry",
         "https://custom.registry",
       ]);
+    });
+  });
+
+  describe("checkerPassRule", () => {
+    it("has correct metadata", () => {
+      expect(checkerPassRule.meta.id).toBe("prereq/no-check-errors");
+      expect(checkerPassRule.meta.blocking).toBe(true);
+    });
+
+    it("returns empty array when check passes with no errors", async () => {
+      checkFn.mockResolvedValueOnce([
+        { severity: "ok", message: "all good" },
+        { severity: "warning", message: "minor issue" },
+      ]);
+      const ctx = createContext();
+      const diagnostics = await checkerPassRule.check(ctx);
+
+      expect(diagnostics).toEqual([]);
+      expect(checkFn).toHaveBeenCalledWith({ dir: "/test/dir", fix: false, strict: false });
+    });
+
+    it("returns empty array when check returns empty results", async () => {
+      checkFn.mockResolvedValueOnce([]);
+      const ctx = createContext();
+      const diagnostics = await checkerPassRule.check(ctx);
+
+      expect(diagnostics).toEqual([]);
+    });
+
+    it("returns errors when check finds errors", async () => {
+      checkFn.mockResolvedValueOnce([
+        { severity: "error", message: "exports field missing" },
+        { severity: "error", message: "types not exported" },
+        { severity: "warning", message: "minor warning" },
+      ]);
+      const ctx = createContext();
+      const diagnostics = await checkerPassRule.check(ctx);
+
+      expect(diagnostics).toHaveLength(3);
+      expect(diagnostics[0]!).toEqual({
+        severity: "error",
+        message: "tspub check found 2 error(s). Fix errors before publishing.",
+        ruleId: "prereq/no-check-errors",
+      });
+      expect(diagnostics[1]!).toEqual({
+        severity: "error",
+        message: "exports field missing",
+        ruleId: "prereq/no-check-errors",
+      });
+      expect(diagnostics[2]!).toEqual({
+        severity: "error",
+        message: "types not exported",
+        ruleId: "prereq/no-check-errors",
+      });
+    });
+
+    it("returns single error entry for one check error", async () => {
+      checkFn.mockResolvedValueOnce([
+        { severity: "error", message: "the only error" },
+      ]);
+      const ctx = createContext();
+      const diagnostics = await checkerPassRule.check(ctx);
+
+      expect(diagnostics).toHaveLength(2);
+      expect(diagnostics[0]!.message).toBe("tspub check found 1 error(s). Fix errors before publishing.");
+      expect(diagnostics[1]!.message).toBe("the only error");
+    });
+
+    it("passes the correct dir to check", async () => {
+      checkFn.mockResolvedValueOnce([]);
+      const ctx = createContext({ dir: "/some/other/dir" });
+      await checkerPassRule.check(ctx);
+
+      expect(checkFn).toHaveBeenCalledWith({ dir: "/some/other/dir", fix: false, strict: false });
     });
   });
 });

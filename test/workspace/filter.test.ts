@@ -29,12 +29,12 @@ describe("workspace: filterPackages patterns", () => {
   it("? single character wildcard", () => {
     const filtered = filterPackages(packages, "@scope/cor?");
     expect(filtered).toHaveLength(1);
-    expect(filtered[0].name).toBe("@scope/core");
+    expect(filtered[0]!.name).toBe("@scope/core");
   });
 
   it("partial wildcard at end", () => {
     const filtered = filterPackages(packages, "stand*");
     expect(filtered).toHaveLength(1);
-    expect(filtered[0].name).toBe("standalone");
+    expect(filtered[0]!.name).toBe("standalone");
   });
 });

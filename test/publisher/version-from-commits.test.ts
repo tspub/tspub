@@ -95,4 +95,63 @@ describe("resolveVersionBump", () => {
     const result = resolveVersionBump(tmpDir);
     expect(result.reason).toContain("feat: add logging");
   });
+
+  it("returns null bump from non-git directory", async () => {
+    const { mkdtempSync, rmSync } = await import("node:fs");
+    const { tmpdir } = await import("node:os");
+    const nonGitDir = mkdtempSync(join(tmpdir(), "tspub-vfc-"));
+    try {
+      const result = resolveVersionBump(nonGitDir);
+      expect(result.bump).toBeNull();
+      expect(result.reason).toBe("no commits found");
+    } finally {
+      rmSync(nonGitDir, { recursive: true, force: true });
+    }
+  });
+
+  it("uses package-scoped tag in monorepo", () => {
+    commitFile("m.txt", "feat: monorepo feature");
+    git("git tag test@1.0.0");
+    commitFile("n.txt", "fix: monorepo fix");
+    const result = resolveVersionBump(tmpDir, "test");
+    expect(result.bump).toBe("patch");
+  });
+
+  it("falls back to all commits when package-scoped tag not found", () => {
+    // No scoped tags exist, so it uses all commits
+    commitFile("o.txt", "feat: first feature");
+    const result = resolveVersionBump(tmpDir, "nonexistent-pkg");
+    // Should find commits (feat counts as minor)
+    expect(result.bump).not.toBeNull();
+  });
+
+  it("feat after fix still resolves to minor", () => {
+    commitFile("p.txt", "fix: small fix");
+    commitFile("q.txt", "feat: new feature");
+    const result = resolveVersionBump(tmpDir);
+    expect(result.bump).toBe("minor");
+    expect(result.reason).toContain("(minor)");
+  });
+
+  it("patch reason includes commit message", () => {
+    commitFile("r.txt", "fix: resolve edge case");
+    const result = resolveVersionBump(tmpDir);
+    expect(result.bump).toBe("patch");
+    expect(result.reason).toContain("fix: resolve edge case");
+    expect(result.reason).toContain("(patch)");
+  });
+
+  it("non-conventional commit followed by feat resolves to minor", () => {
+    commitFile("s.txt", "random message");
+    commitFile("t.txt", "feat: add something");
+    const result = resolveVersionBump(tmpDir);
+    expect(result.bump).toBe("minor");
+  });
+
+  it("breaking change in body text triggers major", () => {
+    commitFile("u.txt", "feat: something BREAKING CHANGE in the middle");
+    const result = resolveVersionBump(tmpDir);
+    expect(result.bump).toBe("major");
+    expect(result.reason).toContain("breaking change");
+  });
 });

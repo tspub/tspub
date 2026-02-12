@@ -18,7 +18,7 @@ describe("exports/cjs-esmodule-interop", () => {
       pkg: { exports: { ".": { require: "./dist/index.cjs" } } },
     });
     expect(results).toHaveLength(1);
-    expect(results[0].message).toContain("__esModule");
+    expect(results[0]!.message).toContain("__esModule");
   });
 
   it("passes on clean CJS", async () => {

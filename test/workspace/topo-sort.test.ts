@@ -7,7 +7,7 @@ describe("workspace: topoSort edge cases", () => {
       { name: "solo", dir: "/tmp/solo", pkg: { name: "solo" }, localDeps: [] },
     ]);
     expect(sorted).toHaveLength(1);
-    expect(sorted[0].name).toBe("solo");
+    expect(sorted[0]!.name).toBe("solo");
   });
 
   it("handles independent packages (no deps between them)", () => {

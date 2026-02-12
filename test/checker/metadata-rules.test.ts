@@ -17,15 +17,15 @@ const fixturesDir = join(import.meta.dirname, "..", "fixtures");
 describe("metadata/license", () => {
   it("passes when license exists", async () => {
     const ctx = await buildContext({ license: "MIT" }, fixturesDir);
-    const diags = licenseRule.check(ctx);
+    const diags = await licenseRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("warns when license is missing", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = licenseRule.check(ctx);
+    const diags = await licenseRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain('"license"');
+    expect(diags[0]!.message).toContain('"license"');
   });
 
   it("fix sets license from LICENSE file", async () => {
@@ -43,7 +43,7 @@ describe("metadata/license", () => {
 describe("metadata/license-file", () => {
   it("passes when LICENSE file exists", async () => {
     const ctx = await buildContext({}, join(fixturesDir, "valid-esm"));
-    const diags = licenseFileRule.check(ctx);
+    const diags = await licenseFileRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -51,7 +51,7 @@ describe("metadata/license-file", () => {
     let testDir = join(tmpdir(), "tspub-test-lic-" + Date.now());
     await mkdir(testDir, { recursive: true });
     const ctx = await buildContext({}, testDir);
-    const diags = licenseFileRule.check(ctx);
+    const diags = await licenseFileRule.check(ctx);
     expect(diags.some((d) => d.message.includes("No LICENSE file"))).toBe(true);
     await rm(testDir, { recursive: true, force: true });
   });
@@ -63,37 +63,37 @@ describe("metadata/repository", () => {
       { repository: "https://github.com/foo/bar" },
       fixturesDir,
     );
-    const diags = repositoryRule.check(ctx);
+    const diags = await repositoryRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("info when repository is missing", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = repositoryRule.check(ctx);
+    const diags = await repositoryRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].severity).toBe("info");
-    expect(diags[0].message).toContain('"repository"');
+    expect(diags[0]!.severity).toBe("info");
+    expect(diags[0]!.message).toContain('"repository"');
   });
 });
 
 describe("metadata/engines", () => {
   it("passes when engines exists", async () => {
     const ctx = await buildContext({ engines: { node: ">=18" } }, fixturesDir);
-    const diags = enginesRule.check(ctx);
+    const diags = await enginesRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("info when engines is missing", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = enginesRule.check(ctx);
+    const diags = await enginesRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].severity).toBe("info");
-    expect(diags[0].message).toContain('"engines"');
+    expect(diags[0]!.severity).toBe("info");
+    expect(diags[0]!.message).toContain('"engines"');
   });
 
-  it("fix sets engines", () => {
+  it("fix sets engines", async () => {
     const pkg: PackageJson = {};
-    const result = enginesRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
+    const result = await enginesRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
     expect(result.pkgModified).toBe(true);
     expect(pkg.engines).toEqual({ node: ">=18.0.0" });
   });
@@ -102,16 +102,16 @@ describe("metadata/engines", () => {
 describe("metadata/side-effects", () => {
   it("passes when sideEffects is set", async () => {
     const ctx = await buildContext({ sideEffects: false }, fixturesDir);
-    const diags = sideEffectsRule.check(ctx);
+    const diags = await sideEffectsRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("info when sideEffects is missing", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = sideEffectsRule.check(ctx);
+    const diags = await sideEffectsRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].severity).toBe("info");
-    expect(diags[0].message).toContain("sideEffects");
+    expect(diags[0]!.severity).toBe("info");
+    expect(diags[0]!.message).toContain("sideEffects");
   });
 
   it("has no fix (not fixable)", () => {
@@ -127,7 +127,7 @@ describe("metadata/peer-dep-conflict", () => {
       dependencies: { lodash: "^4" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = peerDepConflictRule.check(ctx);
+    const diags = await peerDepConflictRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -137,15 +137,15 @@ describe("metadata/peer-dep-conflict", () => {
       dependencies: { react: "^18.2" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = peerDepConflictRule.check(ctx);
+    const diags = await peerDepConflictRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain('"react"');
-    expect(diags[0].message).toContain("both a peer and regular");
+    expect(diags[0]!.message).toContain('"react"');
+    expect(diags[0]!.message).toContain("both a peer and regular");
   });
 
   it("passes when no peerDependencies", async () => {
     const ctx = await buildContext({ dependencies: { lodash: "^4" } }, fixturesDir);
-    const diags = peerDepConflictRule.check(ctx);
+    const diags = await peerDepConflictRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -154,22 +154,22 @@ describe("metadata/deprecated-fields", () => {
   it("warns about jsnext:main", async () => {
     const pkg: PackageJson = { "jsnext:main": "./dist/index.js" };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = deprecatedFieldsRule.check(ctx);
+    const diags = await deprecatedFieldsRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain("jsnext:main");
-    expect(diags[0].message).toContain("deprecated");
+    expect(diags[0]!.message).toContain("jsnext:main");
+    expect(diags[0]!.message).toContain("deprecated");
   });
 
   it("passes when no deprecated fields", async () => {
     const ctx = await buildContext({ module: "./dist/index.js" }, fixturesDir);
-    const diags = deprecatedFieldsRule.check(ctx);
+    const diags = await deprecatedFieldsRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("warns about jsnext field", async () => {
     const pkg: PackageJson = { jsnext: "./dist/index.js" };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = deprecatedFieldsRule.check(ctx);
+    const diags = await deprecatedFieldsRule.check(ctx);
     expect(diags.some((d) => d.message.includes('"jsnext"'))).toBe(true);
   });
 });

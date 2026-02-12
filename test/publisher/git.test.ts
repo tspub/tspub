@@ -7,7 +7,9 @@ import {
   checkDirtyTree,
   checkBranch,
   commitRelease,
+  commitMonorepoRelease,
   tagRelease,
+  pushWithTags,
   rollbackRelease,
 } from "../../src/publisher/git.js";
 
@@ -199,5 +201,82 @@ describe("git: rollbackRelease", () => {
     const result = rollbackRelease(tmpDir, "1.0.0", sha);
 
     expect(result).toBe(false);
+  });
+});
+
+describe("git: checkBranch (error path)", () => {
+  it("returns ok: true with empty branch when not a git repo", () => {
+    const nonGitDir = mkdtempSync(join(tmpdir(), "tspub-branch-test-"));
+    try {
+      const result = checkBranch(nonGitDir, ["main"]);
+      expect(result.ok).toBe(true);
+      expect(result.branch).toBe("");
+    } finally {
+      rmSync(nonGitDir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("git: commitMonorepoRelease", () => {
+  it("commits multiple packages with combined message", () => {
+    setupGitRepo(tmpDir);
+
+    const pkgADir = join(tmpDir, "packages", "a");
+    const pkgBDir = join(tmpDir, "packages", "b");
+    mkdirSync(pkgADir, { recursive: true });
+    mkdirSync(pkgBDir, { recursive: true });
+
+    writeFileSync(join(pkgADir, "package.json"), JSON.stringify({ name: "@scope/a", version: "1.0.0" }));
+    writeFileSync(join(pkgADir, "CHANGELOG.md"), "# Changelog\n");
+    writeFileSync(join(pkgBDir, "package.json"), JSON.stringify({ name: "@scope/b", version: "2.0.0" }));
+    writeFileSync(join(pkgBDir, "CHANGELOG.md"), "# Changelog\n");
+
+    commitMonorepoRelease(tmpDir, [
+      { name: "@scope/a", version: "1.0.0", dir: "packages/a" },
+      { name: "@scope/b", version: "2.0.0", dir: "packages/b" },
+    ]);
+
+    const message = execFileSync("git", ["log", "-1", "--pretty=%B"], {
+      cwd: tmpDir,
+      encoding: "utf-8",
+    }).trim();
+    expect(message).toBe("release: @scope/a@1.0.0, @scope/b@2.0.0");
+
+    const files = execFileSync("git", ["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"], {
+      cwd: tmpDir,
+      encoding: "utf-8",
+    }).trim().split("\n");
+    expect(files).toContain("packages/a/package.json");
+    expect(files).toContain("packages/a/CHANGELOG.md");
+    expect(files).toContain("packages/b/package.json");
+    expect(files).toContain("packages/b/CHANGELOG.md");
+  });
+
+  it("commits single package in monorepo", () => {
+    setupGitRepo(tmpDir);
+    const pkgDir = join(tmpDir, "packages", "solo");
+    mkdirSync(pkgDir, { recursive: true });
+    writeFileSync(join(pkgDir, "package.json"), JSON.stringify({ name: "solo", version: "3.0.0" }));
+    writeFileSync(join(pkgDir, "CHANGELOG.md"), "# Changelog\n");
+
+    commitMonorepoRelease(tmpDir, [
+      { name: "solo", version: "3.0.0", dir: "packages/solo" },
+    ]);
+
+    const message = execFileSync("git", ["log", "-1", "--pretty=%B"], {
+      cwd: tmpDir,
+      encoding: "utf-8",
+    }).trim();
+    expect(message).toBe("release: solo@3.0.0");
+  });
+});
+
+describe("git: pushWithTags", () => {
+  it("returns error when push fails (no remote)", () => {
+    setupGitRepo(tmpDir);
+    const result = pushWithTags(tmpDir);
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeDefined();
+    expect(typeof result.error).toBe("string");
   });
 });

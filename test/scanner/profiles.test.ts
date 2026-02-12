@@ -4,13 +4,13 @@ import { SCAN_PROFILES } from "../../src/scanner/profiles.js";
 describe("SCAN_PROFILES", () => {
   it("has strict profile with empty overrides", () => {
     expect(SCAN_PROFILES.strict).toBeDefined();
-    expect(Object.keys(SCAN_PROFILES.strict)).toHaveLength(0);
+    expect(Object.keys(SCAN_PROFILES.strict!)).toHaveLength(0);
   });
 
   it("exports-only profile turns off non-exports rules", () => {
     expect(SCAN_PROFILES["exports-only"]).toBeDefined();
 
-    const profile = SCAN_PROFILES["exports-only"];
+    const profile = SCAN_PROFILES["exports-only"]!;
 
     // Check that types rules are disabled
     expect(profile["types/false-cjs-esm"]).toBe("off");
@@ -46,7 +46,7 @@ describe("SCAN_PROFILES", () => {
   it("types-only profile turns off non-types rules", () => {
     expect(SCAN_PROFILES["types-only"]).toBeDefined();
 
-    const profile = SCAN_PROFILES["types-only"];
+    const profile = SCAN_PROFILES["types-only"]!;
 
     // Check that exports rules are disabled
     expect(profile["exports/type-module"]).toBe("off");

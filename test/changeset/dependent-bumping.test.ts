@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeDependentBumps } from "../../src/changeset/dependent-bumping.js";
+import { computeDependentBumps, type PackageInfo } from "../../src/changeset/dependent-bumping.js";
 
 describe("changeset: computeDependentBumps edge cases", () => {
   it("handles empty packages list", () => {
@@ -8,7 +8,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("handles no initial bumps", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "a", dependencies: {}, devDependencies: {} },
     ];
     const result = computeDependentBumps(packages, new Map(), "all");
@@ -16,7 +16,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("does not bump packages with no dependency on bumped package", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "a", dependencies: {}, devDependencies: {} },
       { name: "b", dependencies: {}, devDependencies: {} },
     ];
@@ -26,7 +26,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("handles devDependency relationships", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "tests", dependencies: {}, devDependencies: { core: "^1.0.0" } },
     ];
@@ -35,7 +35,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("handles circular dependencies without infinite loop", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "a", dependencies: { b: "^1.0.0" }, devDependencies: {} },
       { name: "b", dependencies: { a: "^1.0.0" }, devDependencies: {} },
     ];
@@ -45,7 +45,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("deep transitive chain propagates correctly", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "a", dependencies: {}, devDependencies: {} },
       { name: "b", dependencies: { a: "^1.0.0" }, devDependencies: {} },
       { name: "c", dependencies: { b: "^1.0.0" }, devDependencies: {} },
@@ -59,7 +59,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("does not downgrade existing bumps", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
       { name: "app", dependencies: { utils: "^1.0.0", core: "^1.0.0" }, devDependencies: {} },
@@ -70,7 +70,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("major mode does not propagate minor bumps", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
     ];
@@ -79,7 +79,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("none mode only returns initial bumps", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
     ];
@@ -89,7 +89,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("propagates to dependents in 'all' mode", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
       { name: "app", dependencies: { utils: "^1.0.0" }, devDependencies: {} },
@@ -103,7 +103,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("with 'none' mode does not propagate", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
     ];
@@ -115,7 +115,7 @@ describe("changeset: computeDependentBumps edge cases", () => {
   });
 
   it("with 'major' mode only propagates major bumps", () => {
-    const packages = [
+    const packages: PackageInfo[] = [
       { name: "core", dependencies: {}, devDependencies: {} },
       { name: "utils", dependencies: { core: "^1.0.0" }, devDependencies: {} },
     ];

@@ -5,8 +5,8 @@ describe("doctor: resolution debugging", () => {
   it("errors when no exports field", () => {
     const diags = debugResolution({ name: "test" }, ".");
     expect(diags).toHaveLength(1);
-    expect(diags[0].severity).toBe("error");
-    expect(diags[0].message).toContain("No \"exports\" field");
+    expect(diags[0]!.severity).toBe("error");
+    expect(diags[0]!.message).toContain("No \"exports\" field");
   });
 
   it("errors and suggests for missing subpath", () => {
@@ -15,8 +15,8 @@ describe("doctor: resolution debugging", () => {
       "./utils",
     );
     expect(diags.length).toBeGreaterThanOrEqual(2);
-    expect(diags[0].severity).toBe("error");
-    expect(diags[0].message).toContain("not found");
+    expect(diags[0]!.severity).toBe("error");
+    expect(diags[0]!.message).toContain("not found");
     const suggestion = diags.find((d) => d.message.includes("Add"));
     expect(suggestion).toBeDefined();
     expect(suggestion!.severity).toBe("info");

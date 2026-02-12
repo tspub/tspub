@@ -4,8 +4,8 @@ import { typesOrderRule } from "../../../src/checker/rules/exports/types-order.j
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: true, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("exports/types-order (types-first)", () => {
-  it("errors when types comes after import", () => {
-    const results = typesOrderRule.check({
+  it("errors when types comes after import", async () => {
+    const results = await typesOrderRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -17,8 +17,8 @@ describe("exports/types-order (types-first)", () => {
     expect(results[0]!.severity).toBe("error");
   });
 
-  it("passes when types comes first", () => {
-    const results = typesOrderRule.check({
+  it("passes when types comes first", async () => {
+    const results = await typesOrderRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -29,8 +29,8 @@ describe("exports/types-order (types-first)", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("errors when types comes after default in nested import", () => {
-    const results = typesOrderRule.check({
+  it("errors when types comes after default in nested import", async () => {
+    const results = await typesOrderRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -43,8 +43,8 @@ describe("exports/types-order (types-first)", () => {
     expect(results).toHaveLength(1);
   });
 
-  it("passes with sugar form where types is first", () => {
-    const results = typesOrderRule.check({
+  it("passes with sugar form where types is first", async () => {
+    const results = await typesOrderRule.check({
       ...baseCtx,
       pkg: {
         exports: { types: "./dist/index.d.ts", import: "./dist/index.js" },
@@ -53,15 +53,15 @@ describe("exports/types-order (types-first)", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("fixes types order in flat condition map", () => {
+  it("fixes types order in flat condition map", async () => {
     const pkg = {
       exports: {
         ".": { import: "./dist/index.js", types: "./dist/index.d.ts" } as Record<string, unknown>,
       },
     };
-    const result = typesOrderRule.fix!({ pkg, dir: "/tmp", distFiles: [] });
+    const result = await typesOrderRule.fix!({ pkg, dir: "/tmp", distFiles: [] });
     expect(result.pkgModified).toBe(true);
     const keys = Object.keys((pkg.exports as Record<string, unknown>)["."] as Record<string, unknown>);
-    expect(keys[0]).toBe("types");
+    expect(keys[0]!).toBe("types");
   });
 });

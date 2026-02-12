@@ -4,8 +4,8 @@ import { esmMainNoExportsRule } from "../../../src/checker/rules/exports/esm-mai
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: false, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("exports/esm-main-no-exports", () => {
-  it("warns when main is .mjs with no exports", () => {
-    const results = esmMainNoExportsRule.check({
+  it("warns when main is .mjs with no exports", async () => {
+    const results = await esmMainNoExportsRule.check({
       ...baseCtx,
       pkg: { main: "./dist/index.mjs" },
     });
@@ -14,8 +14,8 @@ describe("exports/esm-main-no-exports", () => {
     expect(results[0]!.message).toContain("ESM");
   });
 
-  it("warns when main is .js with type=module and no exports", () => {
-    const results = esmMainNoExportsRule.check({
+  it("warns when main is .js with type=module and no exports", async () => {
+    const results = await esmMainNoExportsRule.check({
       ...baseCtx,
       pkg: { main: "./dist/index.js", type: "module" },
     });
@@ -23,24 +23,24 @@ describe("exports/esm-main-no-exports", () => {
     expect(results[0]!.message).toContain("ESM");
   });
 
-  it("passes when exports field exists", () => {
-    const results = esmMainNoExportsRule.check({
+  it("passes when exports field exists", async () => {
+    const results = await esmMainNoExportsRule.check({
       ...baseCtx,
       pkg: { main: "./dist/index.mjs", exports: { ".": "./dist/index.mjs" } },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("passes when main is CJS", () => {
-    const results = esmMainNoExportsRule.check({
+  it("passes when main is CJS", async () => {
+    const results = await esmMainNoExportsRule.check({
       ...baseCtx,
       pkg: { main: "./dist/index.cjs" },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no main field", () => {
-    const results = esmMainNoExportsRule.check({
+  it("passes when no main field", async () => {
+    const results = await esmMainNoExportsRule.check({
       ...baseCtx,
       pkg: {},
     });

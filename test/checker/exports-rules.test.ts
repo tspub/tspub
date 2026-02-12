@@ -26,7 +26,7 @@ describe("exports/value-invalid", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = valueInvalidRule.check(ctx);
+    const diags = await valueInvalidRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -37,14 +37,14 @@ describe("exports/value-invalid", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = valueInvalidRule.check(ctx);
+    const diags = await valueInvalidRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain('must start with "./"');
+    expect(diags[0]!.message).toContain('must start with "./"');
   });
 
   it("skips when no exports", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = valueInvalidRule.check(ctx);
+    const diags = await valueInvalidRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -57,7 +57,7 @@ describe("exports/default-last", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = defaultLastRule.check(ctx);
+    const diags = await defaultLastRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -68,21 +68,21 @@ describe("exports/default-last", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = defaultLastRule.check(ctx);
+    const diags = await defaultLastRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain('"default" must be the last');
+    expect(diags[0]!.message).toContain('"default" must be the last');
   });
 
-  it("fix reorders default to last", () => {
+  it("fix reorders default to last", async () => {
     const pkg: PackageJson = {
       exports: {
         ".": { default: "./dist/index.cjs", import: "./dist/index.js" },
       },
     };
-    const result = defaultLastRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
+    const result = await defaultLastRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
     expect(result.pkgModified).toBe(true);
     const keys = Object.keys(
-      (pkg.exports as Record<string, Record<string, unknown>>)["."],
+      (pkg.exports as Record<string, Record<string, unknown>>)["."]!,
     );
     expect(keys[keys.length - 1]).toBe("default");
   });
@@ -90,7 +90,7 @@ describe("exports/default-last", () => {
   it("skips string shorthand", async () => {
     const pkg: PackageJson = { exports: "./dist/index.js" as unknown as Record<string, unknown> };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = defaultLastRule.check(ctx);
+    const diags = await defaultLastRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -103,7 +103,7 @@ describe("exports/module-before-require", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = moduleBeforeRequireRule.check(ctx);
+    const diags = await moduleBeforeRequireRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -114,21 +114,21 @@ describe("exports/module-before-require", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = moduleBeforeRequireRule.check(ctx);
+    const diags = await moduleBeforeRequireRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain('"module" should come before "require"');
+    expect(diags[0]!.message).toContain('"module" should come before "require"');
   });
 
-  it("fix reorders module before require", () => {
+  it("fix reorders module before require", async () => {
     const pkg: PackageJson = {
       exports: {
         ".": { require: "./dist/index.cjs", module: "./dist/index.mjs" },
       },
     };
-    const result = moduleBeforeRequireRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
+    const result = await moduleBeforeRequireRule.fix!({ pkg, dir: fixturesDir, distFiles: [] });
     expect(result.pkgModified).toBe(true);
     const keys = Object.keys(
-      (pkg.exports as Record<string, Record<string, unknown>>)["."],
+      (pkg.exports as Record<string, Record<string, unknown>>)["."]!,
     );
     expect(keys.indexOf("module")).toBeLessThan(keys.indexOf("require"));
   });
@@ -140,7 +140,7 @@ describe("exports/imports-field", () => {
       imports: { "#utils": "./src/utils.js" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = importsFieldRule.check(ctx);
+    const diags = await importsFieldRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -149,7 +149,7 @@ describe("exports/imports-field", () => {
       imports: { utils: "./src/utils.js" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = importsFieldRule.check(ctx);
+    const diags = await importsFieldRule.check(ctx);
     expect(diags.some((d) => d.message.includes('must start with "#"'))).toBe(true);
   });
 
@@ -158,7 +158,7 @@ describe("exports/imports-field", () => {
       imports: { "#utils": "lodash" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = importsFieldRule.check(ctx);
+    const diags = await importsFieldRule.check(ctx);
     expect(diags.some((d) => d.message.includes('must start with "./" or "#"'))).toBe(true);
   });
 
@@ -167,13 +167,13 @@ describe("exports/imports-field", () => {
       imports: { "#internal": "#other" },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = importsFieldRule.check(ctx);
+    const diags = await importsFieldRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
   it("skips when no imports field", async () => {
     const ctx = await buildContext({}, fixturesDir);
-    const diags = importsFieldRule.check(ctx);
+    const diags = await importsFieldRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -186,7 +186,7 @@ describe("exports/jsx-extensions", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = jsxExtensionsRule.check(ctx);
+    const diags = await jsxExtensionsRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -195,9 +195,9 @@ describe("exports/jsx-extensions", () => {
       exports: { ".": { import: "./dist/index.mjsx" } },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = jsxExtensionsRule.check(ctx);
+    const diags = await jsxExtensionsRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain(".mjsx");
+    expect(diags[0]!.message).toContain(".mjsx");
   });
 
   it("errors on .ctsx extension", async () => {
@@ -205,9 +205,9 @@ describe("exports/jsx-extensions", () => {
       exports: { ".": { require: "./dist/index.ctsx" } },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = jsxExtensionsRule.check(ctx);
+    const diags = await jsxExtensionsRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain(".ctsx");
+    expect(diags[0]!.message).toContain(".ctsx");
   });
 });
 
@@ -233,7 +233,7 @@ describe("exports/format-mismatch", () => {
       exports: { ".": { import: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = formatMismatchRule.check(ctx);
+    const diags = await formatMismatchRule.check(ctx);
     expect(diags.some((d) => d.message.includes("CJS syntax, expected ESM"))).toBe(true);
   });
 
@@ -246,7 +246,7 @@ describe("exports/format-mismatch", () => {
       exports: { ".": { require: "./dist/index.cjs" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = formatMismatchRule.check(ctx);
+    const diags = await formatMismatchRule.check(ctx);
     expect(diags.some((d) => d.message.includes("ESM syntax, expected CJS"))).toBe(true);
   });
 
@@ -257,7 +257,7 @@ describe("exports/format-mismatch", () => {
       exports: { ".": { import: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = formatMismatchRule.check(ctx);
+    const diags = await formatMismatchRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -271,7 +271,7 @@ describe("exports/format-mismatch", () => {
       exports: { ".": { import: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = formatMismatchRule.check(ctx);
+    const diags = await formatMismatchRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -297,7 +297,7 @@ describe("exports/module-esm-only", () => {
       exports: { ".": { module: "./dist/index.js", require: "./dist/index.cjs" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = moduleEsmOnlyRule.check(ctx);
+    const diags = await moduleEsmOnlyRule.check(ctx);
     expect(diags.some((d) => d.message.includes("CJS syntax, expected ESM"))).toBe(true);
   });
 
@@ -310,7 +310,7 @@ describe("exports/module-esm-only", () => {
       exports: { ".": { module: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = moduleEsmOnlyRule.check(ctx);
+    const diags = await moduleEsmOnlyRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -321,7 +321,7 @@ describe("exports/module-esm-only", () => {
       exports: { ".": { module: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = moduleEsmOnlyRule.check(ctx);
+    const diags = await moduleEsmOnlyRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -334,9 +334,9 @@ describe("exports/fallback-array", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = fallbackArrayRule.check(ctx);
+    const diags = await fallbackArrayRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain("fallback array");
+    expect(diags[0]!.message).toContain("fallback array");
   });
 
   it("passes when no fallback arrays", async () => {
@@ -344,7 +344,7 @@ describe("exports/fallback-array", () => {
       exports: { ".": { import: "./dist/index.js" } },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = fallbackArrayRule.check(ctx);
+    const diags = await fallbackArrayRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 });
@@ -360,7 +360,7 @@ describe("exports/types-format", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = typesFormatRule.check(ctx);
+    const diags = await typesFormatRule.check(ctx);
     expect(diags.some((d) => d.message.includes(".d.mts"))).toBe(true);
   });
 
@@ -373,7 +373,7 @@ describe("exports/types-format", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = typesFormatRule.check(ctx);
+    const diags = await typesFormatRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -387,7 +387,7 @@ describe("exports/types-format", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = typesFormatRule.check(ctx);
+    const diags = await typesFormatRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -402,7 +402,7 @@ describe("exports/types-format", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = typesFormatRule.check(ctx);
+    const diags = await typesFormatRule.check(ctx);
     expect(diags.some((d) => d.message.includes("ambiguous"))).toBe(true);
   });
 });
@@ -521,9 +521,9 @@ describe("exports/condition-types", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain("no \"types\" condition");
+    expect(diags[0]!.message).toContain("no \"types\" condition");
   });
 
   it("passes when types sibling exists", async () => {
@@ -536,7 +536,7 @@ describe("exports/condition-types", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -550,7 +550,7 @@ describe("exports/condition-types", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags.some((d) => d.message.includes("import"))).toBe(true);
   });
 
@@ -564,7 +564,7 @@ describe("exports/condition-types", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -573,7 +573,7 @@ describe("exports/condition-types", () => {
       exports: "./dist/index.js" as unknown as Record<string, unknown>,
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -585,7 +585,7 @@ describe("exports/condition-types", () => {
       },
     };
     const ctx = await buildContext(pkg, fixturesDir);
-    const diags = conditionTypesRule.check(ctx);
+    const diags = await conditionTypesRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
   });
 });

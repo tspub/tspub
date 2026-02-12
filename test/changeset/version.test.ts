@@ -56,7 +56,7 @@ describe("changeset: consumeChangesets edge cases", () => {
 
     const result = await consumeChangesets(tmpDir);
     expect(result.updates).toHaveLength(1);
-    expect(result.updates[0].bump).toBe("minor");
-    expect(result.updates[0].newVersion).toBe("2.1.0");
+    expect(result.updates[0]!.bump).toBe("minor");
+    expect(result.updates[0]!.newVersion).toBe("2.1.0");
   });
 });

@@ -17,13 +17,13 @@ beforeEach(() => {
 });
 
 describe("types/false-export-default", () => {
-  it("warns when types have export default but JS uses module.exports without __esModule", () => {
+  it("warns when types have export default but JS uses module.exports without __esModule", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "export default function foo(): void;";
       if (path.endsWith(".cjs")) return "module.exports = function foo() {};";
       return null;
     });
-    const results = falseExportDefaultRule.check({
+    const results = await falseExportDefaultRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -40,13 +40,13 @@ describe("types/false-export-default", () => {
     expect(results[0]!.message).toContain("module.exports");
   });
 
-  it("passes when JS has __esModule flag", () => {
+  it("passes when JS has __esModule flag", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "export default function foo(): void;";
       if (path.endsWith(".cjs")) return 'Object.defineProperty(exports, "__esModule", { value: true });\nmodule.exports = function foo() {};';
       return null;
     });
-    const results = falseExportDefaultRule.check({
+    const results = await falseExportDefaultRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -60,13 +60,13 @@ describe("types/false-export-default", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("passes when types don't have export default", () => {
+  it("passes when types don't have export default", async () => {
     vi.mocked(readFileSafe).mockImplementation((path: string) => {
       if (path.endsWith(".d.ts")) return "export declare function foo(): void;";
       if (path.endsWith(".cjs")) return "module.exports = function foo() {};";
       return null;
     });
-    const results = falseExportDefaultRule.check({
+    const results = await falseExportDefaultRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -80,8 +80,8 @@ describe("types/false-export-default", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips when no build output", () => {
-    const results = falseExportDefaultRule.check({
+  it("skips when no build output", async () => {
+    const results = await falseExportDefaultRule.check({
       ...baseCtx,
       hasBuildOutput: false,
       pkg: {

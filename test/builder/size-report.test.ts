@@ -21,8 +21,8 @@ describe("size-report", () => {
       const errors = checkSizeLimits(sizeInfos, { "*.js": "1kB" });
       // index.js gzip is 2000 bytes = ~1.95kB > 1kB
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0]).toContain("index.js");
-      expect(errors[0]).toContain("exceeds");
+      expect(errors[0]!).toContain("index.js");
+      expect(errors[0]!).toContain("exceeds");
     });
 
     it("supports wildcard * pattern matching all files", () => {
@@ -35,19 +35,19 @@ describe("size-report", () => {
       const errors = checkSizeLimits(sizeInfos, { "*.css": "100B" });
       // Only index.css should match and exceed
       expect(errors).toHaveLength(1);
-      expect(errors[0]).toContain("index.css");
+      expect(errors[0]!).toContain("index.css");
     });
 
     it("supports substring pattern matching", () => {
       const errors = checkSizeLimits(sizeInfos, { "utils": "500B" });
       expect(errors).toHaveLength(1);
-      expect(errors[0]).toContain("utils.js");
+      expect(errors[0]!).toContain("utils.js");
     });
 
     it("reports error for invalid size limit string", () => {
       const errors = checkSizeLimits(sizeInfos, { "*": "abc" });
       expect(errors).toHaveLength(1);
-      expect(errors[0]).toContain("Invalid size limit");
+      expect(errors[0]!).toContain("Invalid size limit");
     });
 
     it("handles MB units", () => {
@@ -74,19 +74,19 @@ describe("size-report", () => {
       try {
         const content = "x".repeat(1000);
         writeFileSync(join(dir, "test.js"), content);
-        const sizes = computeSizes([{ path: join(dir, "test.js") }], dir);
+        const sizes = computeSizes([{ path: join(dir, "test.js"), size: 0 }], dir);
         expect(sizes).toHaveLength(1);
-        expect(sizes[0].raw).toBe(1000);
-        expect(sizes[0].gzip).toBeGreaterThan(0);
-        expect(sizes[0].gzip).toBeLessThan(1000); // gzip should compress
-        expect(sizes[0].name).toBe("test.js");
+        expect(sizes[0]!.raw).toBe(1000);
+        expect(sizes[0]!.gzip).toBeGreaterThan(0);
+        expect(sizes[0]!.gzip).toBeLessThan(1000); // gzip should compress
+        expect(sizes[0]!.name).toBe("test.js");
       } finally {
         rmSync(dir, { recursive: true, force: true });
       }
     });
 
     it("skips files that do not exist", () => {
-      const sizes = computeSizes([{ path: "/nonexistent/file.js" }]);
+      const sizes = computeSizes([{ path: "/nonexistent/file.js", size: 0 }]);
       expect(sizes).toHaveLength(0);
     });
   });

@@ -4,8 +4,8 @@ import { defaultLastRule } from "../../../src/checker/rules/exports/default-last
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: true, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("exports/default-last", () => {
-  it("errors when default is not last", () => {
-    const results = defaultLastRule.check({
+  it("errors when default is not last", async () => {
+    const results = await defaultLastRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -18,8 +18,8 @@ describe("exports/default-last", () => {
     expect(results[0]!.message).toContain("default");
   });
 
-  it("passes when default is last", () => {
-    const results = defaultLastRule.check({
+  it("passes when default is last", async () => {
+    const results = await defaultLastRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -30,23 +30,23 @@ describe("exports/default-last", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("passes with no exports", () => {
-    const results = defaultLastRule.check({ ...baseCtx, pkg: {} });
+  it("passes with no exports", async () => {
+    const results = await defaultLastRule.check({ ...baseCtx, pkg: {} });
     expect(results).toHaveLength(0);
   });
 
-  it("passes with string exports", () => {
-    const results = defaultLastRule.check({ ...baseCtx, pkg: { exports: "./dist/index.js" } });
+  it("passes with string exports", async () => {
+    const results = await defaultLastRule.check({ ...baseCtx, pkg: { exports: "./dist/index.js" } });
     expect(results).toHaveLength(0);
   });
 
-  it("fixes default order", () => {
+  it("fixes default order", async () => {
     const pkg = {
       exports: {
         ".": { default: "./dist/index.js", import: "./dist/index.mjs" } as Record<string, unknown>,
       },
     };
-    const result = defaultLastRule.fix!({ pkg, dir: "/tmp", distFiles: [] });
+    const result = await defaultLastRule.fix!({ pkg, dir: "/tmp", distFiles: [] });
     expect(result.pkgModified).toBe(true);
     const keys = Object.keys((pkg.exports as Record<string, unknown>)["."] as Record<string, unknown>);
     expect(keys[keys.length - 1]).toBe("default");

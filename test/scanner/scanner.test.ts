@@ -172,10 +172,9 @@ describe("ScanResult type", () => {
           infos: 0,
           results: [
             {
-              rule: "test/rule",
+              ruleId: "test/rule",
               message: "Test message",
               severity: "error",
-              fix: false,
             },
           ],
         },

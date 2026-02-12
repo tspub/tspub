@@ -22,7 +22,7 @@ describe("exports/file-not-published", () => {
       pkg: { files: ["src"], exports: { ".": "./dist/index.js" } },
     });
     expect(results.length).toBeGreaterThan(0);
-    expect(results[0].message).toContain("not included");
+    expect(results[0]!.message).toContain("not included");
   });
 
   it("passes when file matches files field", async () => {

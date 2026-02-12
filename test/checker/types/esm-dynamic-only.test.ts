@@ -4,8 +4,8 @@ import { esmDynamicOnlyRule } from "../../../src/checker/rules/types/esm-dynamic
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: false, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("types/esm-dynamic-only", () => {
-  it("warns when only require condition exists", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("warns when only require condition exists", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -18,8 +18,8 @@ describe("types/esm-dynamic-only", () => {
     expect(results[0]!.message).toContain("dynamic import()");
   });
 
-  it("passes when import condition exists alongside require", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("passes when import condition exists alongside require", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -30,8 +30,8 @@ describe("types/esm-dynamic-only", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("passes when default condition exists alongside require", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("passes when default condition exists alongside require", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {
         exports: {
@@ -42,8 +42,8 @@ describe("types/esm-dynamic-only", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("handles sugar form (no subpaths)", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("handles sugar form (no subpaths)", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {
         exports: { require: "./dist/index.cjs" },
@@ -53,24 +53,24 @@ describe("types/esm-dynamic-only", () => {
     expect(results[0]!.message).toContain('"."');
   });
 
-  it("passes when exports is a string", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("passes when exports is a string", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: { exports: "./dist/index.js" },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no exports", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("passes when no exports", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {},
     });
     expect(results).toHaveLength(0);
   });
 
-  it("warns per subpath independently", () => {
-    const results = esmDynamicOnlyRule.check({
+  it("warns per subpath independently", async () => {
+    const results = await esmDynamicOnlyRule.check({
       ...baseCtx,
       pkg: {
         exports: {

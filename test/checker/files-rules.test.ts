@@ -26,9 +26,9 @@ describe("files/bin-shebang", () => {
       bin: { "my-tool": "./dist/cli.js" },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = binShebangRule.check(ctx);
+    const diags = await binShebangRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain("missing a shebang");
+    expect(diags[0]!.message).toContain("missing a shebang");
   });
 
   it("passes when bin file has shebang", async () => {
@@ -41,7 +41,7 @@ describe("files/bin-shebang", () => {
       bin: { "my-tool": "./dist/cli.js" },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = binShebangRule.check(ctx);
+    const diags = await binShebangRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -50,7 +50,7 @@ describe("files/bin-shebang", () => {
     await mkdir(testDir, { recursive: true });
     const pkg: PackageJson = { bin: { cli: "./dist/cli.js" } };
     const ctx = await buildContext(pkg, testDir);
-    const diags = binShebangRule.check(ctx);
+    const diags = await binShebangRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -58,9 +58,9 @@ describe("files/bin-shebang", () => {
     await writeFile(join(testDir, "dist", "cli.js"), 'console.log("hello");');
     const pkg: PackageJson = { name: "my-tool", bin: "./dist/cli.js" };
     const ctx = await buildContext(pkg, testDir);
-    const diags = binShebangRule.check(ctx);
+    const diags = await binShebangRule.check(ctx);
     expect(diags.length).toBeGreaterThan(0);
-    expect(diags[0].message).toContain("my-tool");
+    expect(diags[0]!.message).toContain("my-tool");
   });
 });
 
@@ -84,7 +84,7 @@ describe("files/all-files-format", () => {
     );
     const pkg: PackageJson = {}; // no exports, no type: module
     const ctx = await buildContext(pkg, testDir);
-    const diags = allFilesFormatRule.check(ctx);
+    const diags = await allFilesFormatRule.check(ctx);
     expect(diags.some((d) => d.message.includes("ESM") && d.message.includes("CJS"))).toBe(true);
   });
 
@@ -97,7 +97,7 @@ describe("files/all-files-format", () => {
       exports: { ".": "./dist/index.js" },
     };
     const ctx = await buildContext(pkg, testDir);
-    const diags = allFilesFormatRule.check(ctx);
+    const diags = await allFilesFormatRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 
@@ -106,7 +106,7 @@ describe("files/all-files-format", () => {
     await mkdir(testDir, { recursive: true });
     const pkg: PackageJson = {};
     const ctx = await buildContext(pkg, testDir);
-    const diags = allFilesFormatRule.check(ctx);
+    const diags = await allFilesFormatRule.check(ctx);
     expect(diags).toHaveLength(0);
   });
 

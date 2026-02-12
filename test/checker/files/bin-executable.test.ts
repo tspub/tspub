@@ -16,11 +16,11 @@ afterEach(() => {
 });
 
 describe("files/bin-executable", () => {
-  it("warns when bin file is not executable", () => {
+  it("warns when bin file is not executable", async () => {
     const binPath = join(tmpDir, "dist/cli.js");
     writeFileSync(binPath, "#!/usr/bin/env node\nconsole.log('hi');");
     chmodSync(binPath, 0o644);
-    const results = binExecutableRule.check({
+    const results = await binExecutableRule.check({
       ...baseCtx,
       dir: tmpDir,
       pkg: { bin: { mycli: "./dist/cli.js" } },
@@ -30,11 +30,11 @@ describe("files/bin-executable", () => {
     expect(results[0]!.message).toContain("not executable");
   });
 
-  it("passes when bin file is executable", () => {
+  it("passes when bin file is executable", async () => {
     const binPath = join(tmpDir, "dist/cli.js");
     writeFileSync(binPath, "#!/usr/bin/env node\nconsole.log('hi');");
     chmodSync(binPath, 0o755);
-    const results = binExecutableRule.check({
+    const results = await binExecutableRule.check({
       ...baseCtx,
       dir: tmpDir,
       pkg: { bin: { mycli: "./dist/cli.js" } },
@@ -42,11 +42,11 @@ describe("files/bin-executable", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("handles string bin field", () => {
+  it("handles string bin field", async () => {
     const binPath = join(tmpDir, "dist/cli.js");
     writeFileSync(binPath, "#!/usr/bin/env node");
     chmodSync(binPath, 0o644);
-    const results = binExecutableRule.check({
+    const results = await binExecutableRule.check({
       ...baseCtx,
       dir: tmpDir,
       pkg: { name: "my-tool", bin: "./dist/cli.js" },
@@ -54,8 +54,8 @@ describe("files/bin-executable", () => {
     expect(results).toHaveLength(1);
   });
 
-  it("skips when no build output", () => {
-    const results = binExecutableRule.check({
+  it("skips when no build output", async () => {
+    const results = await binExecutableRule.check({
       ...baseCtx,
       hasBuildOutput: false,
       dir: tmpDir,
@@ -64,8 +64,8 @@ describe("files/bin-executable", () => {
     expect(results).toHaveLength(0);
   });
 
-  it("skips when no bin field", () => {
-    const results = binExecutableRule.check({
+  it("skips when no bin field", async () => {
+    const results = await binExecutableRule.check({
       ...baseCtx,
       dir: tmpDir,
       pkg: {},

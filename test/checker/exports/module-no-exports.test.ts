@@ -4,8 +4,8 @@ import { moduleNoExportsRule } from "../../../src/checker/rules/exports/module-n
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: false, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 describe("exports/module-no-exports", () => {
-  it("warns when module field exists without exports", () => {
-    const results = moduleNoExportsRule.check({
+  it("warns when module field exists without exports", async () => {
+    const results = await moduleNoExportsRule.check({
       ...baseCtx,
       pkg: { module: "./dist/index.esm.js" },
     });
@@ -15,16 +15,16 @@ describe("exports/module-no-exports", () => {
     expect(results[0]!.message).toContain("exports");
   });
 
-  it("passes when exports field exists", () => {
-    const results = moduleNoExportsRule.check({
+  it("passes when exports field exists", async () => {
+    const results = await moduleNoExportsRule.check({
       ...baseCtx,
       pkg: { module: "./dist/index.esm.js", exports: { ".": "./dist/index.js" } },
     });
     expect(results).toHaveLength(0);
   });
 
-  it("passes when no module field", () => {
-    const results = moduleNoExportsRule.check({
+  it("passes when no module field", async () => {
+    const results = await moduleNoExportsRule.check({
       ...baseCtx,
       pkg: {},
     });

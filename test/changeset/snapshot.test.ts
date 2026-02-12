@@ -17,6 +17,6 @@ describe("changeset: createSnapshot", () => {
     await writeFile(join(tmpDir, "package.json"), JSON.stringify({ name: "test-pkg", version: "1.0.0" }));
     await writeFile(join(tmpDir, ".changeset/a.md"), '---\n"test-pkg": minor\n---\n\nFeature');
     const versions = await createSnapshot(tmpDir, "beta");
-    expect(versions[0]).toMatch(/^test-pkg@0\.0\.0-beta-\d+$/);
+    expect(versions[0]!).toMatch(/^test-pkg@0\.0\.0-beta-\d+$/);
   });
 });

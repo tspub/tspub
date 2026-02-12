@@ -18,7 +18,7 @@ describe("exports/cjs-default-export", () => {
       pkg: { exports: { ".": { require: "./dist/index.cjs" } } },
     });
     expect(results).toHaveLength(1);
-    expect(results[0].severity).toBe("info");
+    expect(results[0]!.severity).toBe("info");
   });
 
   it("passes CJS with named exports", async () => {
