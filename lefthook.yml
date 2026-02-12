@@ -3,6 +3,6 @@ pre-commit:
   commands:
     lint:
       glob: "*.{ts,js}"
-      run: npx oxlint {staged_files}
+      run: pnpm exec oxlint {staged_files}
     typecheck:
-      run: npx tsc --noEmit
+      run: pnpm exec tsc --noEmit
