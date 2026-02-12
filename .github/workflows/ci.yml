@@ -55,11 +55,7 @@ jobs:
       - name: Run tspub check on ${{ matrix.target.name }}
         id: check
         run: |
-          TARGET_DIR="/tmp/ecosystem/${{ matrix.target.name }}"
-          if [ -n "${{ matrix.target.dir }}" ]; then
-            TARGET_DIR="$TARGET_DIR/${{ matrix.target.dir }}"
-          fi
-          OUTPUT=$(node ./dist/bin/tspub.js check 2>&1 || true)
+          OUTPUT=$(node ${{ github.workspace }}/dist/bin/tspub.js check 2>&1 || true)
           echo "$OUTPUT"
           echo "$OUTPUT" > /tmp/ecosystem-result.txt
         working-directory: ${{ matrix.target.dir && format('/tmp/ecosystem/{0}/{1}', matrix.target.name, matrix.target.dir) || format('/tmp/ecosystem/{0}', matrix.target.name) }}
