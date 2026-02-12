@@ -169,11 +169,11 @@ export default defineConfig({
       ],
     },
     socialLinks: [
-      { icon: "github", link: "https://github.com/anishgiri/tspub" },
+      { icon: "github", link: "https://github.com/tspub/tspub" },
       { icon: "npm", link: "https://www.npmjs.com/package/tspub" },
     ],
     editLink: {
-      pattern: "https://github.com/anishgiri/tspub/edit/main/docs/:path",
+      pattern: "https://github.com/tspub/tspub/edit/main/docs/:path",
       text: "Edit this page on GitHub",
     },
     search: {
