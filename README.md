@@ -1,6 +1,10 @@
 <div align="center">
 
-<img alt="tspub" src="docs/public/logo.svg" width="80">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/terminal.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/terminal.svg">
+  <img alt="tspub terminal demo" src="docs/terminal.svg" width="600">
+</picture>
 
 # tspub
 
