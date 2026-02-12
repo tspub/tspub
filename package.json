@@ -30,6 +30,7 @@
     "bootstrap": "node scripts/bootstrap.js",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:ecosystem": "vitest run --config vitest.ecosystem.config.ts",
     "lint": "oxlint src/ bin/ test/",
     "typecheck": "tsc --noEmit",
@@ -74,6 +75,10 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/prompts": "^2.4.9",
+    "@vercel/node": "^5.1.0",
+    "@vercel/og": "^0.6.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "fflate": "^0.8.2",
     "oxlint": "^1.16.0",
     "typescript": "^5.7.0",
     "vitepress": "^1.6.4",
