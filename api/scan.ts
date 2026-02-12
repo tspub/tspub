@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, readFileSync, existsSync, readdirSync, writeFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
+import { mkdtempSync, mkdirSync, rmSync, readFileSync, existsSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { buildContext } from "../src/checker/framework/context.js";
 import { runRules } from "../src/checker/framework/runner.js";
 import { allRules } from "../src/checker/rules/index.js";
@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let repoDir: string | undefined;
 
   try {
-    // Download repo tarball via GitHub API (no git binary needed)
+    // Download repo tarball via GitHub API and extract with pure Node.js
     repoDir = mkdtempSync(join(tmpdir(), "tspub-scan-"));
     const tarballUrl = `https://api.github.com/repos/${repo}/tarball`;
     const tarRes = await fetch(tarballUrl, {
@@ -46,12 +46,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           : `GitHub API error: ${tarRes.status}`,
       );
     }
-    const tarPath = join(repoDir, "repo.tar.gz");
-    writeFileSync(tarPath, Buffer.from(await tarRes.arrayBuffer()));
-    execFileSync("tar", ["xzf", tarPath, "--strip-components=1", "-C", repoDir], {
-      stdio: "pipe",
-      timeout: 30_000,
-    });
+    const gzipped = Buffer.from(await tarRes.arrayBuffer());
+    extractTarGz(gzipped, repoDir);
 
     // Find package directories
     const pkgDirs = findPackageDirs(repoDir);
@@ -237,4 +233,43 @@ function findPackageDirs(repoDir: string): string[] {
   }
 
   return dirs;
+}
+
+/** Extract a .tar.gz buffer to outDir, stripping the first path component. */
+function extractTarGz(gzipped: Buffer, outDir: string) {
+  const data = gunzipSync(gzipped);
+  let offset = 0;
+
+  while (offset < data.length - 512) {
+    const header = data.subarray(offset, offset + 512);
+    // End of archive: two consecutive zero blocks
+    if (header.every((b) => b === 0)) break;
+
+    const nameRaw = header.subarray(0, 100).toString("utf-8").replace(/\0/g, "");
+    const sizeOctal = header.subarray(124, 136).toString("utf-8").replace(/\0/g, "").trim();
+    const typeFlag = header[156];
+    const prefix = header.subarray(345, 500).toString("utf-8").replace(/\0/g, "");
+
+    const fullName = prefix ? `${prefix}/${nameRaw}` : nameRaw;
+    const size = sizeOctal ? parseInt(sizeOctal, 8) : 0;
+
+    offset += 512; // move past header
+
+    // Strip first path component (e.g. "owner-repo-sha/")
+    const parts = fullName.split("/");
+    const stripped = parts.slice(1).join("/");
+
+    if (stripped && typeFlag === 53) {
+      // Directory (type '5' = ASCII 53)
+      mkdirSync(join(outDir, stripped), { recursive: true });
+    } else if (stripped && (typeFlag === 48 || typeFlag === 0) && size > 0) {
+      // Regular file (type '0' = ASCII 48, or null)
+      const filePath = join(outDir, stripped);
+      mkdirSync(dirname(filePath), { recursive: true });
+      writeFileSync(filePath, data.subarray(offset, offset + size));
+    }
+
+    // Advance past file data (rounded up to 512-byte blocks)
+    offset += Math.ceil(size / 512) * 512;
+  }
 }
