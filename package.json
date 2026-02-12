@@ -22,7 +22,10 @@
   },
   "files": [
     "dist",
-    "!dist/**/*.map"
+    "!dist/**/*.map",
+    "!dist/**/*.d.cts",
+    "!dist/src",
+    "!dist/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build": "test -f dist/bin/tspub.js || node scripts/bootstrap.js && node dist/bin/tspub.js build",
