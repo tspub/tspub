@@ -4,7 +4,7 @@
 
 Publishing a TypeScript npm package correctly requires:
 
-1. A bundler (tsup, tsdown, unbuild, or raw tsc)
+1. A bundler (tsup, unbuild, or raw tsc)
 2. A linter for package.json (publint)
 3. A type resolution checker (attw)
 4. A versioning tool (changesets, semantic-release)
@@ -24,7 +24,7 @@ npm install -D tspub
 
 | What you needed | What tspub provides |
 |-----------------|---------------------|
-| tsup / tsdown | `tspub build` |
+| tsup / unbuild | `tspub build` |
 | publint | `tspub check` (exports + files + metadata rules) |
 | @arethetypeswrong/cli | `tspub check` (types/resolution rule) |
 | @changesets/cli | `tspub changeset` |
@@ -34,7 +34,7 @@ npm install -D tspub
 
 ## Key Differentiators
 
-### 60 Built-in Rules
+### 70 Built-in Rules
 
 More than publint (~40 rules) and attw (~12 problem types) combined. Every rule has a clear ID, severity, and many are auto-fixable.
 

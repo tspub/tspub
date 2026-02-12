@@ -1,6 +1,6 @@
 # Checker
 
-tspub's checker validates your TypeScript package against **60 rules** across 5 categories. It catches issues that would break consumers of your package.
+tspub's checker validates your TypeScript package against **70 rules** across 6 categories. It catches issues that would break consumers of your package.
 
 ## Quick Start
 
@@ -115,8 +115,9 @@ tspub check --fix --fix-type exports,metadata
 
 | Category | Rules | Description |
 |----------|-------|-------------|
-| [exports](/check/rules/exports/) | 23 | Package exports field validation |
-| [types](/check/rules/types/) | 9 | TypeScript config and type resolution |
-| [files](/check/rules/files/) | 7 | File inclusion and format checks |
-| [metadata](/check/rules/metadata/) | 8 | Package metadata validation |
+| [exports](/check/rules/exports/) | 28 | Package exports field validation |
+| [imports](/check/rules/imports/) | 6 | Import map validation |
+| [types](/check/rules/types/) | 14 | TypeScript config and type resolution |
+| [files](/check/rules/files/) | 10 | File inclusion and format checks |
+| [metadata](/check/rules/metadata/) | 11 | Package metadata validation |
 | [size](/check/rules/size/) | 1 | Package size analysis |

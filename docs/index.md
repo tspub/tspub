@@ -3,7 +3,7 @@ layout: home
 hero:
   name: tspub
   text: Stop shipping broken packages
-  tagline: One CLI to build, validate, and publish TypeScript packages. 60 rules. Auto-fix. Zero config.
+  tagline: One CLI to build, validate, and publish TypeScript packages. 70 rules. Auto-fix. Zero config.
   actions:
     - theme: brand
       text: Get Started →
@@ -17,7 +17,7 @@ hero:
 
 features:
   - icon: 🔍
-    title: 60 Validation Rules
+    title: 70 Validation Rules
     details: Exports, types, files, metadata, size. Everything publint + attw check, plus rules they miss. Auto-fix included.
     link: /check/
     linkText: See all rules →
@@ -125,7 +125,7 @@ features:
 
 <div class="stats-grid">
   <div class="stat-item">
-    <h3>60</h3>
+    <h3>70</h3>
     <p>validation rules</p>
   </div>
   <div class="stat-item">
@@ -169,7 +169,7 @@ npx tspub check --fix    # find problems, fix them
 npx tspub publish patch  # build → validate → version → ship
 ```
 
-That's it. One tool. 60 rules. Auto-fix. Rollback on failure.
+That's it. One tool. 70 rules. Auto-fix. Rollback on failure.
 
 ---
 
@@ -179,18 +179,18 @@ That's it. One tool. 60 rules. Auto-fix. Rollback on failure.
 
 | | tspub | publint | attw | tsup | np | changesets |
 |:--|:--:|:--:|:--:|:--:|:--:|:--:|
-| **Validation rules** | 60 | 47 | 5 | — | — | — |
+| **Validation rules** | 70 | 40 | 12 | — | — | — |
 | **Auto-fix** | ✓ | — | — | — | — | — |
 | **Build ESM/CJS** | ✓ | — | — | ✓ | — | — |
 | **DTS bundling** | ✓ | — | — | ✓ | — | — |
 | **Type checking** | ✓ | — | ✓ | — | — | — |
 | **Prereq gates** | ✓ | — | — | — | ✓ | — |
-| **Rollback** | ✓ | — | — | — | — | — |
+| **Rollback** | ✓ | — | — | — | ✓ | — |
 | **Changesets** | ✓ | — | — | — | — | ✓ |
 | **Repo scanning** | ✓ | — | — | — | — | — |
 | **Diagnostics** | ✓ | — | — | — | — | — |
 | **Plugins** | ✓ | — | — | ✓ | — | — |
-| **Zero config** | ✓ | ✓ | ✓ | — | — | — |
+| **Zero config** | ✓ | ✓ | ✓ | ✓ | — | — |
 
 </div>
 

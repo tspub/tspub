@@ -20,6 +20,9 @@
 [![npm](https://img.shields.io/npm/v/tspub?style=flat-square&color=cc3534)](https://www.npmjs.com/package/tspub)
 [![downloads](https://img.shields.io/npm/dm/tspub?style=flat-square)](https://www.npmjs.com/package/tspub)
 [![tests](https://img.shields.io/github/actions/workflow/status/anishgiri/tspub/ci.yml?style=flat-square&label=tests)](https://github.com/anishgiri/tspub/actions)
+[![coverage](https://img.shields.io/badge/coverage-88%25-brightgreen?style=flat-square)](https://github.com/tspub/tspub)
+[![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![docs](https://img.shields.io/badge/docs-tspub.dev-blueviolet?style=flat-square)](https://tspub.dev)
 
 </div>
 
@@ -112,7 +115,7 @@ npx tspub check --fix
 Your package is ready.
 ```
 
-**That's tspub.** One command that catches the 60 ways your package can break.
+**That's tspub.** One command that catches the 70 ways your package can break.
 
 <br>
 
@@ -132,7 +135,7 @@ Your package is ready.
 <tr>
 <td align="center" width="33%">
 
-**60 rules**
+**70 rules**
 
 Covers publint.
 Covers attw.
@@ -189,17 +192,18 @@ No more glue scripts.
 tspub check                    # find problems
 tspub check --fix              # fix the safe ones
 tspub check --fix --unsafe     # fix everything
-tspub check --list-rules       # see all 60 rules
+tspub check --list-rules       # see all 70 rules
 ```
 
 **What it catches:**
 
 | | |
 |:--|:--|
-| **exports** (27 rules) | Types not first, missing files, ESM/CJS issues, condition ordering |
-| **types** (13 rules) | False ESM/CJS, resolution failures across node10/16/bundler |
+| **exports** (28 rules) | Types not first, missing files, ESM/CJS issues, condition ordering |
+| **imports** (6 rules) | Import map validation, resolution checks |
+| **types** (14 rules) | False ESM/CJS, resolution failures across node10/16/bundler |
 | **files** (10 rules) | .env leaked, wrong shebang, format inconsistencies |
-| **metadata** (9 rules) | Missing license, bad engines, deprecated fields |
+| **metadata** (11 rules) | Missing license, bad engines, deprecated fields |
 | **size** (1 rule) | Package too big |
 
 <br>
@@ -431,7 +435,7 @@ await scan({ url: "https://github.com/user/repo" });
 <details>
 <summary><b>How is this different from publint?</b></summary>
 
-publint has 47 rules focused on exports and file formats. tspub has 60 rules covering exports, types, files, metadata, and size. We check everything publint checks, plus type resolution (like attw), plus tsconfig validation, size budgets, and more. And we can auto-fix.
+publint has 40 rules focused on exports and file formats. tspub has 70 rules covering exports, imports, types, files, metadata, and size. We check everything publint checks, plus type resolution (like attw), plus tsconfig validation, size budgets, and more. And we can auto-fix.
 
 </details>
 
@@ -480,7 +484,7 @@ We've all been there. Now we don't have to go back.
 
 <br>
 
-[GitHub](https://github.com/anishgiri/tspub) · [Issues](https://github.com/anishgiri/tspub/issues) · [npm](https://npmjs.com/package/tspub)
+[Docs](https://tspub.dev) · [Playground](https://tspub.dev/playground) · [GitHub](https://github.com/tspub/tspub) · [Issues](https://github.com/tspub/tspub/issues) · [npm](https://npmjs.com/package/tspub)
 
 <br>
 

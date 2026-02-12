@@ -1,6 +1,6 @@
 # Migrating from tsup
 
-tsup is deprecated in favor of [tsdown](https://tsdown.dev). tspub uses tsdown under the hood — switching is straightforward.
+tspub uses esbuild under the hood — switching from tsup is straightforward.
 
 ## Step 1: Remove tsup
 
@@ -61,7 +61,7 @@ rm tsup.config.ts
 
 ## What You Gain
 
-- **60 lint rules** validating your package.json automatically
+- **70 lint rules** validating your package.json automatically
 - **Auto-fix** for common issues (`tspub check --fix`)
 - **Type testing** with `.test-d.ts` files
 - **Changeset versioning** built-in

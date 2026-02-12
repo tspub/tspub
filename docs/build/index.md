@@ -1,6 +1,6 @@
 # Build
 
-tspub uses [tsdown](https://tsdown.dev) (Rolldown-based) under the hood for fast, zero-config builds.
+tspub uses [esbuild](https://esbuild.github.io) under the hood for fast, zero-config builds.
 
 ## Quick Start
 

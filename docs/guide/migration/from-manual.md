@@ -26,7 +26,7 @@ npx tspub doctor --fix
 npx tspub check
 ```
 
-This validates your `package.json` against 60 rules. Fix issues automatically:
+This validates your `package.json` against 70 rules. Fix issues automatically:
 
 ```bash
 npx tspub check --fix

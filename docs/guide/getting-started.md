@@ -39,7 +39,7 @@ This creates a fully configured TypeScript package with:
 npx tspub build
 ```
 
-Outputs ESM + CJS + `.d.ts` to `dist/`. Powered by [tsdown](https://tsdown.dev) (Rolldown-based).
+Outputs ESM + CJS + `.d.ts` to `dist/`. Powered by [esbuild](https://esbuild.github.io).
 
 ## Check
 
@@ -47,8 +47,9 @@ Outputs ESM + CJS + `.d.ts` to `dist/`. Powered by [tsdown](https://tsdown.dev) 
 npx tspub check
 ```
 
-Runs 60 rules across 5 categories:
+Runs 70 rules across 6 categories:
 - **exports** — validates the `exports` field, condition ordering, file existence
+- **imports** — validates the `imports` field and import map resolution
 - **types** — checks tsconfig settings and type resolution
 - **files** — ensures sensitive files aren't published, bin has shebang
 - **metadata** — license, repository, engines, sideEffects
@@ -98,10 +99,33 @@ This runs: build → check → version bump → changelog → git tag → npm pu
 }
 ```
 
+## Troubleshooting
+
+**`npx tspub` hangs or fails to download**
+Check your npm registry and proxy settings. If behind a corporate firewall, ensure `npm config get registry` returns a reachable URL.
+
+**`Permission denied` on `tspub init`**
+On macOS/Linux, ensure the target directory is writable. tspub does not require sudo.
+
+**`Cannot find module` errors after build**
+Run `tspub check` first — it will tell you exactly which exports point to missing files. Usually a `clean: true` rebuild fixes it.
+
+**Windows-specific: `EPERM` or path issues**
+Use forward slashes in config paths. Avoid running from OneDrive-synced directories. Node 18+ is required.
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success — no errors found |
+| `1` | Failure — errors found, build failed, or command error |
+
+All commands follow this convention. In CI, a non-zero exit code will fail the pipeline.
+
 ## What's Next?
 
 - [Why tspub?](/guide/why-tspub) — The problem tspub solves
-- [Checker Rules](/check/rules/) — All 60 rules explained
+- [Checker Rules](/check/rules/) — All 70 rules explained
 - [Doctor](/doctor/) — 16 diagnostic rules
 - [Scan](/scan/) — Audit any GitHub repo
 - [Configuration](/config/) — Customize with `tspub.config.ts`

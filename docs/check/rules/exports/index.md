@@ -2,7 +2,7 @@
 
 Validate the `exports` field in package.json — condition ordering, file existence, format matching, and more.
 
-## Rules (23)
+## Rules (28)
 
 | Rule | Description | Severity | Fixable |
 |------|-------------|----------|---------|
@@ -25,7 +25,12 @@ Validate the `exports` field in package.json — condition ordering, file existe
 | [`no-deprecated-subpath`](./no-deprecated-subpath) | Warn on trailing / in exports keys (use /* instead) | :yellow_circle: warning |  |
 | [`imports-key-invalid`](./imports-key-invalid) | Check that all imports field keys start with # | :red_circle: error |  |
 | [`browser-conflict`](./browser-conflict) | Warn when both top-level browser field and exports exist | :yellow_circle: warning |  |
+| [`browser-value-conflict`](./browser-value-conflict) | Detect when exports values are remapped by the browser field | :yellow_circle: warning |  |
 | [`file-not-published`](./file-not-published) | Check that files referenced in exports/main/bin are included in the published package | :red_circle: error |  |
 | [`glob-matched-files`](./glob-matched-files) | Validate that wildcard patterns in exports match at least one file | :yellow_circle: warning |  |
 | [`cjs-esmodule-interop`](./cjs-esmodule-interop) | Detect CJS files using __esModule interop pattern that may cause inconsistent bundler behavior | :yellow_circle: warning |  |
 | [`cjs-default-export`](./cjs-default-export) | Detect CJS-only packages with only a default export and no named exports | :blue_circle: info |  |
+| [`types-first`](./types-first) | Check that "types" is the first condition in every condition map | :red_circle: error | :wrench: |
+| [`esm-main-no-exports`](./esm-main-no-exports) | Warn when "main" is ESM but "exports" is missing | :yellow_circle: warning |  |
+| [`module-no-exports`](./module-no-exports) | Warn when "module" field exists but "exports" is missing | :yellow_circle: warning |  |
+| [`types-not-exported`](./types-not-exported) | Check that "types" field is also represented in exports conditions | :yellow_circle: warning |  |
