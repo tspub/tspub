@@ -21,7 +21,7 @@ yarn add -D @tspub-dev/tspub
 ## Scaffold a New Package
 
 ```bash
-npx tspub init my-package
+npx @tspub-dev/tspub init my-package
 cd my-package
 npm install
 ```
@@ -36,7 +36,7 @@ This creates a fully configured TypeScript package with:
 ## Build
 
 ```bash
-npx tspub build
+npx @tspub-dev/tspub build
 ```
 
 Outputs ESM + CJS + `.d.ts` to `dist/`. Powered by [esbuild](https://esbuild.github.io).
@@ -44,7 +44,7 @@ Outputs ESM + CJS + `.d.ts` to `dist/`. Powered by [esbuild](https://esbuild.git
 ## Check
 
 ```bash
-npx tspub check
+npx @tspub-dev/tspub check
 ```
 
 Runs 70 rules across 6 categories:
@@ -58,7 +58,7 @@ Runs 70 rules across 6 categories:
 Auto-fix most issues:
 
 ```bash
-npx tspub check --fix
+npx @tspub-dev/tspub check --fix
 ```
 
 ## Doctor {#doctor}
@@ -66,8 +66,8 @@ npx tspub check --fix
 Diagnose your project environment and auto-fix issues:
 
 ```bash
-npx tspub doctor
-npx tspub doctor --fix  # Auto-repair issues
+npx @tspub-dev/tspub doctor
+npx @tspub-dev/tspub doctor --fix  # Auto-repair issues
 ```
 
 ## Scan {#scan}
@@ -75,14 +75,14 @@ npx tspub doctor --fix  # Auto-repair issues
 Audit any GitHub repository for packaging issues:
 
 ```bash
-npx tspub scan https://github.com/owner/repo
-npx tspub scan --top 10  # Scan top npm packages
+npx @tspub-dev/tspub scan https://github.com/owner/repo
+npx @tspub-dev/tspub scan --top 10  # Scan top npm packages
 ```
 
 ## Publish
 
 ```bash
-npx tspub publish patch   # or minor, major
+npx @tspub-dev/tspub publish patch   # or minor, major
 ```
 
 This runs: build → check → version bump → changelog → git tag → npm publish.
@@ -101,7 +101,7 @@ This runs: build → check → version bump → changelog → git tag → npm pu
 
 ## Troubleshooting
 
-**`npx tspub` hangs or fails to download**
+**`npx @tspub-dev/tspub` hangs or fails to download**
 Check your npm registry and proxy settings. If behind a corporate firewall, ensure `npm config get registry` returns a reachable URL.
 
 **`Permission denied` on `tspub init`**

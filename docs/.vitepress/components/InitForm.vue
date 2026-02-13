@@ -173,7 +173,7 @@ function generate() {
     >
       Or run in your terminal:
       <code style="display: block; margin-top: 8px; font-size: 13px">
-        npx tspub init {{ name }}{{ dualPublish ? " --cjs" : "" }}{{ react ? " --react" : "" }}
+        npx @tspub-dev/tspub init {{ name }}{{ dualPublish ? " --cjs" : "" }}{{ react ? " --react" : "" }}
       </code>
     </div>
   </div>

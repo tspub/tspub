@@ -11,25 +11,25 @@ npm install -D @tspub-dev/tspub
 ## Step 2: Run Doctor
 
 ```bash
-npx tspub doctor
+npx @tspub-dev/tspub doctor
 ```
 
 This diagnoses your existing package and shows what needs fixing. Add `--fix` to auto-repair:
 
 ```bash
-npx tspub doctor --fix
+npx @tspub-dev/tspub doctor --fix
 ```
 
 ## Step 3: Run Check
 
 ```bash
-npx tspub check
+npx @tspub-dev/tspub check
 ```
 
 This validates your `package.json` against 70 rules. Fix issues automatically:
 
 ```bash
-npx tspub check --fix
+npx @tspub-dev/tspub check --fix
 ```
 
 ## Step 4: Add Build

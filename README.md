@@ -35,14 +35,14 @@ npm i -D @tspub-dev/tspub
 # or: yarn add -D @tspub-dev/tspub
 ```
 
-Or run directly: `npx tspub check`
+Or run directly: `npx @tspub-dev/tspub check`
 
 ## What it does
 
 **70 rules** that catch broken exports, bad types, missing files, and metadata issues — before your users do.
 
 ```bash
-$ npx tspub check
+$ npx @tspub-dev/tspub check
 
 exports/types-order      "types" should be first in conditions
 exports/file-exists      ./dist/index.js doesn't exist
@@ -53,7 +53,7 @@ metadata/license         missing license field
 ```
 
 ```bash
-$ npx tspub check --fix
+$ npx @tspub-dev/tspub check --fix
 
 Fixed 3 problems. 1 requires manual fix (types/false-esm).
 ```
