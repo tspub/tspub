@@ -165,8 +165,8 @@ Two hours later, someone opens an issue: *"Types aren't working."* Your stomach 
 ## The Solution
 
 ```bash
-npx tspub check --fix    # find problems, fix them
-npx tspub publish patch  # build → validate → version → ship
+npx @tspub-dev/tspub check --fix    # find problems, fix them
+npx @tspub-dev/tspub publish patch  # build → validate → version → ship
 ```
 
 That's it. One tool. 70 rules. Auto-fix. Rollback on failure.
@@ -202,19 +202,19 @@ That's it. One tool. 70 rules. Auto-fix. Rollback on failure.
 
 ```bash [Check your package]
 # No install needed
-npx tspub check
+npx @tspub-dev/tspub check
 ```
 
 ```bash [Fix issues]
-npx tspub check --fix
+npx @tspub-dev/tspub check --fix
 ```
 
 ```bash [Build]
-npx tspub build
+npx @tspub-dev/tspub build
 ```
 
 ```bash [Publish]
-npx tspub publish patch
+npx @tspub-dev/tspub publish patch
 ```
 
 :::

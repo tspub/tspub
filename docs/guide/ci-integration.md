@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npx tspub build
-      - run: npx tspub check --format json > tspub-report.json
-      - run: npx tspub test-types
+      - run: npx @tspub-dev/tspub build
+      - run: npx @tspub-dev/tspub check --format json > tspub-report.json
+      - run: npx @tspub-dev/tspub test-types
 ```
 
 ## JSON Output for CI
@@ -65,7 +65,7 @@ tspub check --profile strict
 ```yaml
 - name: Publish
   if: github.ref == 'refs/heads/main'
-  run: npx tspub publish --ci
+  run: npx @tspub-dev/tspub publish --ci
   env:
     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
@@ -82,8 +82,8 @@ With `--ci` flag, tspub:
 - name: Version
   if: github.ref == 'refs/heads/main'
   run: |
-    npx tspub changeset version
+    npx @tspub-dev/tspub changeset version
     git add .
     git commit -m "chore: version packages"
-    npx tspub publish
+    npx @tspub-dev/tspub publish
 ```

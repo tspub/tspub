@@ -30,8 +30,8 @@ tspub reads the same `.changeset/` directory format. Existing changesets continu
 - run: npx changeset publish
 
 # After
-- run: npx tspub changeset version
-- run: npx tspub publish
+- run: npx @tspub-dev/tspub changeset version
+- run: npx @tspub-dev/tspub publish
 ```
 
 ## New Features

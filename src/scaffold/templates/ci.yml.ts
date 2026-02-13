@@ -22,6 +22,6 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test -- --run
-      - run: npx tspub check
+      - run: npx @tspub-dev/tspub check
 `;
 }

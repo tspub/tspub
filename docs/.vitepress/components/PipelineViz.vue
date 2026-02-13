@@ -84,7 +84,7 @@ const stages = [
     >
       Try it:
       <code style="display: block; margin-top: 4px">
-        npx tspub publish patch --dry-run
+        npx @tspub-dev/tspub publish patch --dry-run
       </code>
     </div>
   </div>

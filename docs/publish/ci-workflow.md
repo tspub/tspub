@@ -26,8 +26,8 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - run: npm ci
-      - run: npx tspub changeset version
-      - run: npx tspub publish
+      - run: npx @tspub-dev/tspub changeset version
+      - run: npx @tspub-dev/tspub publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
@@ -62,7 +62,7 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
       - run: npm ci
-      - run: npx tspub changeset snapshot --tag pr-${{ github.event.number }}
+      - run: npx @tspub-dev/tspub changeset snapshot --tag pr-${{ github.event.number }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
