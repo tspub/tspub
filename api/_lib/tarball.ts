@@ -72,10 +72,13 @@ function parseTar(data: Uint8Array): Map<string, string> {
       .trim();
     const size = parseInt(sizeStr, 8) || 0;
 
-    // Check for UStar extended prefix at offset 345 (155 bytes)
-    const prefix = decoder
+    // UStar prefix at offset 345 (155 bytes) — only use it if it looks
+    // like a real path segment (contains a letter).  Some tarballs (e.g.
+    // @types/* packages) store numeric garbage in this field.
+    const prefixRaw = decoder
       .decode(header.subarray(345, 500))
       .replace(/\0/g, "");
+    const prefix = /[a-zA-Z]/.test(prefixRaw) ? prefixRaw : "";
     const fullName = prefix ? `${prefix}/${rawName}` : rawName;
 
     const typeFlag = header[156];
