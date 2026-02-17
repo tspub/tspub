@@ -82,8 +82,9 @@ function parseTar(data: Uint8Array): Map<string, string> {
     offset += 512;
 
     if (typeFlag !== 53 /* '5' = dir */ && !fullName.endsWith("/")) {
-      // Strip "package/" prefix from npm tarballs
-      const cleanName = fullName.replace(/^package\//, "");
+      // Strip leading directory from npm tarballs (usually "package/"
+      // but scoped packages like @types/node may use the bare name)
+      const cleanName = fullName.replace(/^[^/]+\//, "");
       if (isTextFile(cleanName) && size < 2_000_000) {
         files.set(
           cleanName,
