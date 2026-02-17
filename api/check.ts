@@ -9,7 +9,6 @@ import { allRules } from "../src/checker/rules/index.js";
 import { buildContext } from "../src/checker/framework/context.js";
 import { runRules } from "../src/checker/framework/runner.js";
 import type { PackageJson } from "../src/shared/package-json.js";
-import type { Rule, Severity } from "../src/checker/framework/types.js";
 
 // Rules that need the TypeScript compiler or dynamic import() which won't work in serverless
 const SKIP_RULES = new Set([

@@ -1,4 +1,3 @@
-import type { Severity } from "../../src/checker/framework/types.js";
 
 export interface CheckResultForScore {
   severity: string;
