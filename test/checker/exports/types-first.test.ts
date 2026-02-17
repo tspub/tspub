@@ -14,7 +14,7 @@ describe("exports/types-order (types-first)", () => {
       },
     });
     expect(results).toHaveLength(1);
-    expect(results[0]!.severity).toBe("error");
+    expect(results[0]!.severity).toBe("warning");
   });
 
   it("passes when types comes first", async () => {

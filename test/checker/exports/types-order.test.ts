@@ -52,7 +52,7 @@ describe("exports/types-order check()", () => {
       },
     });
     expect(results).toHaveLength(1);
-    expect(results[0]!.severity).toBe("error");
+    expect(results[0]!.severity).toBe("warning");
     expect(results[0]!.message).toContain("types should come BEFORE");
   });
 

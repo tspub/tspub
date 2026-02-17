@@ -43,7 +43,10 @@ describe("E2E: Check Features", () => {
 
     const ruleIds = errors.map((r) => r.ruleId).filter(Boolean);
     expect(ruleIds.length).toBeGreaterThan(0);
-    expect(ruleIds).toContain("exports/types-order");
+
+    // types-order is now a warning, check it's in warnings instead
+    const warningRuleIds = results.filter((r) => r.severity === "warning").map((r) => r.ruleId).filter(Boolean);
+    expect(warningRuleIds).toContain("exports/types-order");
 
     const typeWarnings = results.filter(
       (r) => (r.severity === "warning" || r.severity === "info") && r.ruleId?.startsWith("types/"),
