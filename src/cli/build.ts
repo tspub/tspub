@@ -77,7 +77,7 @@ async function buildSinglePackage(
   const clean = options.clean === true || (options.clean === undefined && buildConfig?.clean === true);
   const outDir = options.outDir ?? buildConfig?.outDir ?? "dist";
   const dts = options.dts !== false && (options.dts !== undefined || buildConfig?.dts !== false);
-  const sourcemap = options.sourcemap !== false && (options.sourcemap !== undefined || buildConfig?.sourcemap !== false);
+  const sourcemap = options.sourcemap === true || (options.sourcemap === undefined && buildConfig?.sourcemap !== false);
 
   const label = prefix ? `[${prefix}] ` : "";
 
@@ -132,6 +132,7 @@ export function registerBuild(program: Command): void {
     .description("Build ESM + CJS + types")
     .option("--format <formats>", "Output formats (comma-separated: esm,cjs,iife)")
     .option("--no-dts", "Skip .d.ts generation")
+    .option("--sourcemap", "Generate sourcemaps")
     .option("--no-sourcemap", "Skip sourcemap generation")
     .option("--watch", "Watch mode")
     .option("--entry <paths>", "Entry file(s): paths or name=path mappings (comma-separated)")

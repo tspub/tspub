@@ -1,5 +1,3 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-
 export const config = {
   runtime: "edge",
 };
@@ -16,7 +14,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // Fetch score data
   let score = 0;
-  let grade = "?";
+  let _grade = "?";
   let categories: Record<string, number> = {};
 
   try {
@@ -31,7 +29,7 @@ export default async function handler(req: Request): Promise<Response> {
         categoryScores: Record<string, number>;
       };
       score = data.score;
-      grade = data.grade;
+      _grade = data.grade;
       categories = data.categoryScores;
     }
   } catch {
