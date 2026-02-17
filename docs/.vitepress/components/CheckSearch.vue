@@ -14,7 +14,7 @@ const suggestions = ref<Array<{ name: string; version: string }>>([]);
 const showSuggestions = ref(false);
 const activeIndex = ref(-1);
 let debounceTimer: ReturnType<typeof setTimeout>;
-let justSelected = false;
+let justSelected = !!props.initialPkg;
 
 const quickPicks = ["chalk", "react", "express", "zod", "next"];
 
