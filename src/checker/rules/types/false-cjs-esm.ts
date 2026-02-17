@@ -52,6 +52,13 @@ export const falseCjsEsmRule: Rule = {
       if (!typesEntry) continue;
       const dtsPath = typesEntry.value;
 
+      // Only flag the "import" condition (matching attw behavior).
+      // When a package uses shared .d.ts files across both import and require
+      // conditions, the require path having a format mismatch is expected —
+      // this is a valid dual-publish pattern used by effect, hono, etc.
+      const explicitDts = dtsPath.endsWith(".d.mts") || dtsPath.endsWith(".d.cts");
+      if (!explicitDts && entry.condition === "require") continue;
+
       const jsContent = readFileSafe(join(ctx.dir, jsPath));
       if (!jsContent) continue;
 
@@ -60,7 +67,6 @@ export const falseCjsEsmRule: Rule = {
 
       // Determine what format the .d.ts is declaring
       let declaredFormat: "esm" | "cjs";
-      const explicitDts = dtsPath.endsWith(".d.mts") || dtsPath.endsWith(".d.cts");
       if (dtsPath.endsWith(".d.mts")) {
         declaredFormat = "esm";
       } else if (dtsPath.endsWith(".d.cts")) {

@@ -4,7 +4,7 @@ export const typesOrderRule: Rule = {
   meta: {
     id: "exports/types-order",
     description: "Check that types condition comes before default in exports",
-    defaultSeverity: "error",
+    defaultSeverity: "warning",
     fixable: "safe",
     category: "exports",
   },
@@ -41,7 +41,7 @@ export const typesOrderRule: Rule = {
         const firstNonTypes = Math.min(...nonTypesIndices);
         if (typesIdx > firstNonTypes) {
           results.push({
-            severity: "error",
+            severity: "warning",
             message:
               'exports["."].types should come BEFORE import/require/default',
           });
@@ -62,7 +62,7 @@ export const typesOrderRule: Rule = {
         typesIndex > defaultIndex
       ) {
         results.push({
-          severity: "error",
+          severity: "warning",
           message:
             'exports["."].import.types should come BEFORE default',
         });
@@ -83,7 +83,7 @@ export const typesOrderRule: Rule = {
         typesIndex > defaultIndex
       ) {
         results.push({
-          severity: "error",
+          severity: "warning",
           message:
             'exports["."].require.types should come BEFORE default',
         });

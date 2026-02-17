@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import fg from "fast-glob";
 import type { Rule, RawDiagnostic } from "../../framework/types.js";
 import { walkExports } from "../utils/exports-traversal.js";
+import { fileExists } from "../../../shared/resolve.js";
 
 const ALWAYS_INCLUDED = [
   "package.json",
@@ -94,6 +95,11 @@ export const fileNotPublishedRule: Rule = {
 
     for (const file of referencedFiles) {
       if (isAlwaysIncluded(file)) continue;
+
+      // Skip files that don't exist on disk — they're likely build artifacts
+      // not yet built. The file-exists rule handles that case separately.
+      const fullPath = join(ctx.dir, file);
+      if (!(await fileExists(fullPath))) continue;
 
       if (filesField) {
         if (!matchesFilesField(file, filesField)) {

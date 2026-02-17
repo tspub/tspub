@@ -11,7 +11,7 @@ export const typesFirstRule: Rule = {
   meta: {
     id: "exports/types-first",
     description: 'Check that "types" is the first condition in every condition map',
-    defaultSeverity: "error",
+    defaultSeverity: "warning",
     fixable: "safe",
     category: "exports",
   },
@@ -39,7 +39,7 @@ export const typesFirstRule: Rule = {
       // Inside import/require conditions, the types-order rule handles ordering.
       if (!insideFormatCondition && keys.includes("types") && keys[0] !== "types") {
         results.push({
-          severity: "error",
+          severity: "warning",
           message: `${path}: "types" should be the first condition (found at position ${keys.indexOf("types") + 1})`,
         });
       }
