@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## 1.0.0
+
+### Highlights
+
+tspub v1.0.0 — the unified TypeScript package toolkit. Init, build, check, and publish from one tool. tspub builds itself.
+
+### Fixed
+- Close checker rule gaps vs publint and attw: improved CJS/ESM interop detection, false-CJS-as-ESM detection, and export condition analysis
+- Fix scoped package support (`@types/node`, `@scope/pkg`) across API and playground
+- Fix clean URL routing (`/check/chalk`, `/scan/user/repo`) in playground
+- Fix UStar prefix validation in tar parser for `@types/*` packages
+- Fix `sourcemap: false` config option being ignored due to Commander flag defaults
+- Improve score accuracy, comparison labels, and zero-byte file handling
+
+### Improved
+- Reduce published bundle size: 59KB compressed / 198KB unpacked (was 76KB / 346KB)
+- Enable minification for all build output
+- Size rule now respects `files` field for accurate measurement
+- Remove all lint warnings (56 → 0)
+
 ## 0.1.0
 
 ### Added
