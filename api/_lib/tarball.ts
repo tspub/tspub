@@ -10,9 +10,14 @@ export async function fetchAndUnpack(
   name: string,
   version?: string,
 ): Promise<TarballResult> {
+  // Scoped packages like @types/node need the scope's / kept literal
+  const encodedName = name.startsWith("@")
+    ? "@" + name.slice(1).split("/").map(encodeURIComponent).join("/")
+    : encodeURIComponent(name);
+
   const metaUrl = version
-    ? `https://registry.npmjs.org/${encodeURIComponent(name)}/${encodeURIComponent(version)}`
-    : `https://registry.npmjs.org/${encodeURIComponent(name)}/latest`;
+    ? `https://registry.npmjs.org/${encodedName}/${encodeURIComponent(version)}`
+    : `https://registry.npmjs.org/${encodedName}/latest`;
 
   const metaRes = await fetch(metaUrl);
   if (!metaRes.ok) {
