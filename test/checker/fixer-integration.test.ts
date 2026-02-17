@@ -28,8 +28,6 @@ describe("checker fix integration", () => {
 
   it("fix on missing-fields adds required fields", async () => {
     const dir = await makeTmpCopy("missing-fields");
-    const before = JSON.parse(await readFile(join(dir, "package.json"), "utf-8"));
-
     const results = await check({ dir, fix: true, strict: false });
 
     const after = JSON.parse(await readFile(join(dir, "package.json"), "utf-8"));
@@ -65,10 +63,8 @@ describe("checker fix integration", () => {
 
   it("fix respects fixTypes filter", async () => {
     const dir = await makeTmpCopy("broken-exports");
-    const before = await readFile(join(dir, "package.json"), "utf-8");
-
     // Only fix 'metadata' category, not 'exports'
-    const results = await check({ dir, fix: true, strict: false, fixTypes: ["metadata"] });
+    await check({ dir, fix: true, strict: false, fixTypes: ["metadata"] });
 
     const after = await readFile(join(dir, "package.json"), "utf-8");
     // Result should still be valid JSON

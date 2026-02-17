@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { join, basename, dirname, relative } from "node:path";
-import { copyFile, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import glob from "fast-glob";
 import { logger } from "../shared/logger.js";

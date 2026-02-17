@@ -1,4 +1,4 @@
-import type { Rule, RawDiagnostic } from "../../framework/types.js";
+import type { Rule } from "../../framework/types.js";
 
 function hasBrowserCondition(value: unknown): boolean {
   if (value == null || typeof value !== "object") return false;

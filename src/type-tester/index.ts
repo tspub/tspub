@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { readdir, writeFile, rm, mkdir, readFile } from "node:fs/promises";
+import { readdir, writeFile, rm, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { fileExists } from "../shared/resolve.js";
 

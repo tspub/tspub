@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import type { Rule, RawDiagnostic } from "../../framework/types.js";
+import type { Rule } from "../../framework/types.js";
 import { getCodeFormat, readFileSafe } from "../utils/format-detection.js";
 
 export const moduleEsmRule: Rule = {

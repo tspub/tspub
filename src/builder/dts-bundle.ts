@@ -1,5 +1,5 @@
 import { writeFile, rm } from "node:fs/promises";
-import { join, dirname, resolve, relative } from "node:path";
+import { join, resolve } from "node:path";
 import glob from "fast-glob";
 import { logger } from "../shared/logger.js";
 
@@ -251,7 +251,7 @@ function resolveLocalModule(
 function collectFromFile(
   ctx: BundleContext,
   sourceFile: import("typescript").SourceFile,
-  isEntry: boolean,
+  _isEntry: boolean,
 ): void {
   const resolved = resolve(sourceFile.fileName);
   if (ctx.visited.has(resolved)) return;
@@ -560,7 +560,7 @@ function resolveCollisions(
 function transformNodeWithRenames(
   ctx: BundleContext,
   node: import("typescript").Node,
-  sourceFile: import("typescript").SourceFile,
+  _sourceFile: import("typescript").SourceFile,
 ): import("typescript").Node {
   const { ts, checker } = ctx;
   if (ctx.renameMap.size === 0) return node;

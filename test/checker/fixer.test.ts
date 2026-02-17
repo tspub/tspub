@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { check } from "../../src/checker/index.js";
-import type { CheckOptions } from "../../src/checker/index.js";
 import { readPackageJson, writePackageJson } from "../../src/shared/package-json.js";
 import { mkdir, rm, cp, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -199,7 +198,7 @@ describe("check --fix", () => {
 
   it("--fix-type files only applies files-category fixes", async () => {
     await writeFile(join(testDir, "LICENSE"), "MIT License\n\nCopyright ...", "utf-8");
-    const results = await check({ dir: testDir, fix: true, unsafe: true, fixTypes: ["files"], strict: false });
+    await check({ dir: testDir, fix: true, unsafe: true, fixTypes: ["files"], strict: false });
     const pkg = await readPackageJson(testDir);
 
     // files-category fixes should be applied (e.g. files field, prepublish)
@@ -212,7 +211,7 @@ describe("check --fix", () => {
 
   it("--fix-type exports,metadata applies both categories", async () => {
     await writeFile(join(testDir, "LICENSE"), "MIT License\n\nCopyright ...", "utf-8");
-    const results = await check({ dir: testDir, fix: true, unsafe: true, fixTypes: ["exports", "metadata"], strict: false });
+    await check({ dir: testDir, fix: true, unsafe: true, fixTypes: ["exports", "metadata"], strict: false });
     const pkg = await readPackageJson(testDir);
 
     // exports should be applied

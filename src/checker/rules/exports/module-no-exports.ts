@@ -1,4 +1,4 @@
-import type { Rule, RawDiagnostic } from "../../framework/types.js";
+import type { Rule } from "../../framework/types.js";
 
 /**
  * Warns when "module" field exists but no "exports" field.

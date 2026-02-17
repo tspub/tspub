@@ -69,7 +69,7 @@ export async function parallelMap<T, R>(
   concurrency: number,
   fn: (item: T) => Promise<R>,
 ): Promise<R[]> {
-  const results: R[] = new Array(items.length);
+  const results: R[] = Array.from<R>({ length: items.length });
   let idx = 0;
 
   async function worker() {

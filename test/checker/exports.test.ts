@@ -7,7 +7,6 @@ import { dotEntryRule } from "../../src/checker/rules/exports/dot-entry.js";
 import { typesOrderRule } from "../../src/checker/rules/exports/types-order.js";
 import { importConditionRule } from "../../src/checker/rules/exports/import-condition.js";
 import type { PackageJson } from "../../src/shared/package-json.js";
-import type { CheckContext } from "../../src/checker/framework/types.js";
 
 const fixturesDir = join(import.meta.dirname, "..", "fixtures");
 

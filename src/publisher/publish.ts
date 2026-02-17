@@ -4,7 +4,7 @@ import { build } from "../builder/index.js";
 import { generateChangelog } from "../builder/changelog.js";
 import type { ChangelogStyle } from "../builder/changelog.js";
 import { loadConfig, loadConfigWithInheritance } from "../config/loader.js";
-import { isMonorepoRoot, discoverWorkspaces, topoSort, filterPackages } from "../workspace/index.js";
+import { discoverWorkspaces, topoSort, filterPackages } from "../workspace/index.js";
 import { resolveVersionBump } from "./version-from-commits.js";
 import { bumpVersion, bumpPrerelease } from "./version-bump.js";
 import { commitRelease, commitMonorepoRelease, tagRelease, pushWithTags, rollbackRelease } from "./git.js";

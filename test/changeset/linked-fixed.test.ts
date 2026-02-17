@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { consumeChangesets, _semverGt } from "../../src/changeset/version.js";
-import { rm, mkdir, writeFile, readFile } from "node:fs/promises";
+import { rm, mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 

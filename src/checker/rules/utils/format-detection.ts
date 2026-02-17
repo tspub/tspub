@@ -7,7 +7,7 @@ function stripComments(code: string): string {
 }
 
 const ESM_RE =
-  /([\s;]|^)(import[\w,{}\s*]*from|import\s*['"{\*]|export\b\s*(?:[*{]|default|type|function|const|var|let|async)|import\.meta\b)/m;
+  /([\s;]|^)(import[\w,{}\s*]*from|import\s*['"{*]|export\b\s*(?:[*{]|default|type|function|const|var|let|async)|import\.meta\b)/m;
 
 const CJS_RE =
   /([\s;]|^)(module\.exports\b|exports\.\w|require\s*\(|Object\.(defineProperty|defineProperties|assign)\s*\(\s*exports\b)/m;
