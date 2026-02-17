@@ -1,6 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdir, writeFile, rm } from "node:fs/promises";
-import { join } from "node:path";
+import { describe, it, expect } from "vitest";
 import {
   nodeVersionRule,
   npmVersionRule,
@@ -10,7 +8,6 @@ import {
   gitRemoteRule,
 } from "../../../src/doctor/rules/environment.js";
 import type { DoctorContext } from "../../../src/doctor/framework/types.js";
-import type { PackageJson } from "../../../src/shared/package-json.js";
 
 function buildContext(overrides: Partial<DoctorContext> = {}): DoctorContext {
   return {

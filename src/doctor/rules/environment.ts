@@ -88,7 +88,7 @@ export const packageManagerRule: DoctorRule = {
       "yarn.lock",
       "bun.lockb",
     ];
-    const sorted = [...new Set([...priority])].filter((f) => {
+    const sorted = [...new Set(priority)].filter((f) => {
       try {
         const { existsSync } = require("node:fs") as typeof import("node:fs");
         return existsSync(join(ctx.dir, f));

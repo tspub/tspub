@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createGitHubRelease, parseGitHubRepo, extractReleaseNotes } from "../../src/publisher/github.js";
-import { writeFileSync, mkdirSync, rmSync, mkdtempSync } from "node:fs";
+import { writeFileSync, rmSync, mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -117,13 +117,11 @@ describe("createGitHubRelease", () => {
   });
 
   it("reports asset upload failures without failing the release", async () => {
-    let callCount = 0;
     const tmpDir = mkdtempSync(join(tmpdir(), "tspub-gh-asset-"));
     const assetPath = join(tmpDir, "artifact.tar.gz");
     writeFileSync(assetPath, "fake content");
 
     globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
-      callCount++;
       const urlStr = typeof url === "string" ? url : url instanceof URL ? url.href : url.url;
       if (urlStr.includes("uploads.github.com")) {
         return new Response("Too large", { status: 413 });

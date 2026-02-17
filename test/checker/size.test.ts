@@ -4,8 +4,6 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { buildContext } from "../../src/checker/framework/context.js";
 import { packageSizeRule } from "../../src/checker/rules/size/package-size.js";
-import type { PackageJson } from "../../src/shared/package-json.js";
-
 describe("size/package-size", () => {
   let testDir: string;
 

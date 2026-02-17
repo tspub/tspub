@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { execFileSync, execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { statSync, mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -154,7 +154,7 @@ describe.skipIf(shouldSkip)("CLI comprehensive tests", () => {
     });
 
     it("--check nonexistent subpath shows error", () => {
-      const { stderr, exitCode } = run(["doctor", "--check", "./nonexistent"], join(fixturesDir, "valid-esm"), true);
+      const { exitCode } = run(["doctor", "--check", "./nonexistent"], join(fixturesDir, "valid-esm"), true);
       expect(exitCode).toBe(1);
     });
   });
@@ -230,7 +230,7 @@ describe.skipIf(shouldSkip)("CLI comprehensive tests", () => {
   // ── Pack CLI ──────────────────────────────────────────────
   describe("pack command", () => {
     it("tspub pack shows dry-run output", () => {
-      const { stdout, exitCode } = run(["pack"], join(fixturesDir, "valid-esm"));
+      const { exitCode } = run(["pack"], join(fixturesDir, "valid-esm"));
       // npm pack --dry-run lists files
       expect(exitCode).toBe(0);
     });

@@ -102,8 +102,8 @@ describe("SCAN_PROFILES", () => {
   });
 
   it("all override values are valid severity or off", () => {
-    for (const [profileName, profile] of Object.entries(SCAN_PROFILES)) {
-      for (const [rule, severity] of Object.entries(profile)) {
+    for (const [_profileName, profile] of Object.entries(SCAN_PROFILES)) {
+      for (const [_rule, severity] of Object.entries(profile)) {
         expect(
           severity === "off" ||
           severity === "error" ||

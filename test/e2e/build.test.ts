@@ -97,7 +97,7 @@ describe("E2E: Build Features", () => {
 
     const iife = await readFile(join(dist, "index.global.js"), "utf-8");
     expect(iife).toContain("IifePkg");
-    expect(iife).toMatch(/\(.*(?:function|\(\)|\=\>)/s);
+    expect(iife).toMatch(/\(.*(?:function|\(\)|=>)/s);
     expect(iife).toContain("multiply");
     expect(iife).not.toMatch(/^export\s/m);
     expect(await fileExists(join(dist, "index.global.js"))).toBe(true);

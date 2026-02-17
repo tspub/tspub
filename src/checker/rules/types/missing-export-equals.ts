@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import type { Rule, RawDiagnostic } from "../../framework/types.js";
 import { walkExports } from "../utils/exports-traversal.js";
-import { readFileSafe, hasCJSSyntax } from "../utils/format-detection.js";
+import { readFileSafe } from "../utils/format-detection.js";
 
 const EXPORT_EQUALS_RE = /\bexport\s*=/;
 

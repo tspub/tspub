@@ -1,5 +1,5 @@
 import * as esbuild from "esbuild";
-import { join, basename, dirname } from "node:path";
+import { join, dirname } from "node:path";
 import { stat, readFile as fsReadFile, writeFile as fsWriteFile, rename, mkdir, access } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { execFile } from "node:child_process";

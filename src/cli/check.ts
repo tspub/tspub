@@ -6,7 +6,6 @@ import type { Severity } from "../checker/framework/types.js";
 import type { CheckResult } from "../checker/index.js";
 import { isMonorepoRoot, discoverWorkspaces, topoSort, filterPackages } from "../workspace/index.js";
 import { loadConfigWithInheritance } from "../config/loader.js";
-import { loadConfig } from "../config/loader.js";
 import chalk from "chalk";
 import { PROFILES, ALLOW_LIST_PROFILES, parseSeverityOverrides } from "../checker/profiles.js";
 import { printGroupedResults, printResolutionTable, printListRules } from "../checker/formatter.js";

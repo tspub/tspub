@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { loadDoctorPlugins } from "../../src/doctor/plugins.js";
-import type { DoctorRule } from "../../src/doctor/framework/types.js";
 
 describe("loadDoctorPlugins", () => {
   let tempDir: string;

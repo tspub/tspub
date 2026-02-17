@@ -16,7 +16,7 @@ export const packageSizeRule: Rule = {
     if (!(await fileExists(distDir))) return [];
 
     const totalSize = await getDirectorySize(distDir);
-    const sizeKB = Math.round(totalSize / 1024);
+    const _sizeKB = Math.round(totalSize / 1024);
     const sizeMB = (totalSize / (1024 * 1024)).toFixed(1);
 
     if (totalSize > 10 * 1024 * 1024) {

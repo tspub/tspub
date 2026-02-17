@@ -1,4 +1,4 @@
-import type { Rule, RawDiagnostic } from "../../framework/types.js";
+import type { Rule } from "../../framework/types.js";
 
 const GIT_URL_RE = /^(?:https?:\/\/|git(?:\+https?)?:\/\/|git@)[\w.-]+[/:][\w./-]+(?:\.git)?$/;
 

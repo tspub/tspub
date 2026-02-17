@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { consumeChangesets } from "../../src/changeset/version.js";
 import { rm, readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
-import { fixture, makeTmpCopy, fileExists } from "./_helpers.js";
+import { makeTmpCopy, fileExists } from "./_helpers.js";
 
 describe("E2E: Changeset Features", () => {
   it("consumeChangesets parses changeset and computes correct version bump", async () => {

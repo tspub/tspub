@@ -9,7 +9,7 @@
  */
 
 import type { PackageJson } from "../shared/package-json.js";
-import type { Rule, CheckContext, RawDiagnostic, Severity } from "./framework/types.js";
+import type { Rule, CheckContext, RawDiagnostic } from "./framework/types.js";
 import { RULE_MAPPING, CATEGORY_ORDER } from "./profiles.js";
 
 // --- Exports rules (browser-safe) ---
