@@ -122,20 +122,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Score
-    const score = computeScore(results);
+    // Score — count rules per category so silent passes are included
+    const rulesPerCategory: Record<string, number> = {};
+    for (const r of rules) {
+      const cat = r.meta.id.split("/")[0]!;
+      rulesPerCategory[cat] = (rulesPerCategory[cat] ?? 0) + 1;
+    }
+    const score = computeScore(results, rulesPerCategory);
 
-    // Comparison summary
-    const tspubFinds = results.filter(
+    // Comparison summary — counts issues that overlap with each tool's coverage area
+    const issues = results.filter(
       (r) => r.severity === "error" || r.severity === "warning",
-    ).length;
-    const publintFinds = results.filter(
-      (r) =>
-        (r.severity === "error" || r.severity === "warning") && r.publint,
-    ).length;
-    const attwFinds = results.filter(
-      (r) => (r.severity === "error" || r.severity === "warning") && r.attw,
-    ).length;
+    );
+    const tspubFinds = issues.length;
+    const publintOverlap = issues.filter((r) => r.publint).length;
+    const attwOverlap = issues.filter((r) => r.attw).length;
+    const tspubOnly = issues.filter((r) => !r.publint && !r.attw).length;
 
     res.setHeader(
       "Cache-Control",
@@ -151,7 +153,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       categoryScores: score.categories,
       results,
       fixDiffs,
-      comparison: { tspubFinds, publintFinds, attwFinds },
+      comparison: { tspubFinds, publintOverlap, attwOverlap, tspubOnly },
       rulesRun: rules.length,
       categoryOrder: CATEGORY_ORDER,
     });

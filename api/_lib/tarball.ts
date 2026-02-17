@@ -76,13 +76,15 @@ function parseTar(data: Uint8Array): Map<string, string> {
     const typeFlag = header[156];
     offset += 512;
 
-    if (size > 0 && typeFlag !== 53 /* '5' = dir */ && !fullName.endsWith("/")) {
+    if (typeFlag !== 53 /* '5' = dir */ && !fullName.endsWith("/")) {
       // Strip "package/" prefix from npm tarballs
       const cleanName = fullName.replace(/^package\//, "");
       if (isTextFile(cleanName) && size < 2_000_000) {
         files.set(
           cleanName,
-          decoder.decode(data.subarray(offset, offset + size)),
+          size > 0
+            ? decoder.decode(data.subarray(offset, offset + size))
+            : "",
         );
       }
     }

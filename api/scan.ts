@@ -95,7 +95,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           };
         });
 
-        const score = computeScore(results);
+        const rulesPerCategory: Record<string, number> = {};
+        for (const r of rules) {
+          const cat = r.meta.id.split("/")[0]!;
+          rulesPerCategory[cat] = (rulesPerCategory[cat] ?? 0) + 1;
+        }
+        const score = computeScore(results, rulesPerCategory);
         const errors = results.filter((r) => r.severity === "error").length;
         const warnings = results.filter((r) => r.severity === "warning").length;
 
@@ -262,11 +267,11 @@ function extractTarGz(gzipped: Buffer, outDir: string) {
     if (stripped && typeFlag === 53) {
       // Directory (type '5' = ASCII 53)
       mkdirSync(join(outDir, stripped), { recursive: true });
-    } else if (stripped && (typeFlag === 48 || typeFlag === 0) && size > 0) {
-      // Regular file (type '0' = ASCII 48, or null)
+    } else if (stripped && (typeFlag === 48 || typeFlag === 0)) {
+      // Regular file (type '0' = ASCII 48, or null) — include 0-byte files
       const filePath = join(outDir, stripped);
       mkdirSync(dirname(filePath), { recursive: true });
-      writeFileSync(filePath, data.subarray(offset, offset + size));
+      writeFileSync(filePath, size > 0 ? data.subarray(offset, offset + size) : Buffer.alloc(0));
     }
 
     // Advance past file data (rounded up to 512-byte blocks)
