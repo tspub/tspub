@@ -3,6 +3,7 @@
   "buildCommand": "pnpm run docs:build",
   "outputDirectory": "docs/.vitepress/dist",
   "framework": "vitepress",
+  "cleanUrls": true,
   "installCommand": "pnpm install",
   "github": {
     "silent": true

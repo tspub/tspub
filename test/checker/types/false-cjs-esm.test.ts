@@ -5,15 +5,19 @@ vi.mock("../../../src/checker/rules/utils/format-detection.js", () => ({
   getExpectedFormat: vi.fn(),
   readFileSafe: vi.fn(),
   getCodeFormat: vi.fn(),
+  hasESMSyntax: vi.fn(),
+  hasCJSSyntax: vi.fn(),
 }));
 
-import { readFileSafe, getCodeFormat } from "../../../src/checker/rules/utils/format-detection.js";
+import { readFileSafe, getCodeFormat, hasESMSyntax, hasCJSSyntax } from "../../../src/checker/rules/utils/format-detection.js";
 
 const baseCtx = { dir: "/tmp", compilerOptions: null, hasBuildOutput: true, distFiles: [], allJsFiles: [], hasUnresolvedExtends: false };
 
 beforeEach(() => {
   vi.mocked(readFileSafe).mockReturnValue(null);
   vi.mocked(getCodeFormat).mockReturnValue("unknown");
+  vi.mocked(hasESMSyntax).mockReturnValue(false);
+  vi.mocked(hasCJSSyntax).mockReturnValue(false);
 });
 
 describe("types/false-cjs-esm", () => {
@@ -95,6 +99,56 @@ describe("types/false-cjs-esm", () => {
       pkg: {
         exports: {
           ".": { types: "./dist/index.d.cts", require: "./dist/index.cjs" },
+        },
+      },
+    });
+    expect(results).toHaveLength(0);
+  });
+
+  it("detects FalseCJS on mixed JS when dts is explicit .d.cts", async () => {
+    vi.mocked(readFileSafe).mockReturnValue("module.exports = {}; export default {};");
+    vi.mocked(getCodeFormat).mockReturnValue("mixed");
+    vi.mocked(hasESMSyntax).mockReturnValue(true);
+    vi.mocked(hasCJSSyntax).mockReturnValue(true);
+    const results = await falseCjsEsmRule.check({
+      ...baseCtx,
+      pkg: {
+        exports: {
+          ".": { types: "./dist/index.d.cts", require: "./dist/index.js" },
+        },
+      },
+    });
+    expect(results).toHaveLength(1);
+    expect(results[0]!.message).toContain("FalseCJS");
+    expect(results[0]!.message).toContain("ESM syntax");
+  });
+
+  it("detects FalseESM on mixed JS when dts is explicit .d.mts", async () => {
+    vi.mocked(readFileSafe).mockReturnValue("module.exports = {}; export default {};");
+    vi.mocked(getCodeFormat).mockReturnValue("mixed");
+    vi.mocked(hasESMSyntax).mockReturnValue(true);
+    vi.mocked(hasCJSSyntax).mockReturnValue(true);
+    const results = await falseCjsEsmRule.check({
+      ...baseCtx,
+      pkg: {
+        exports: {
+          ".": { types: "./dist/index.d.mts", import: "./dist/index.js" },
+        },
+      },
+    });
+    expect(results).toHaveLength(1);
+    expect(results[0]!.message).toContain("FalseESM");
+    expect(results[0]!.message).toContain("CJS syntax");
+  });
+
+  it("skips mixed JS when dts is ambiguous .d.ts", async () => {
+    vi.mocked(readFileSafe).mockReturnValue("module.exports = {}; export default {};");
+    vi.mocked(getCodeFormat).mockReturnValue("mixed");
+    const results = await falseCjsEsmRule.check({
+      ...baseCtx,
+      pkg: {
+        exports: {
+          ".": { types: "./dist/index.d.ts", require: "./dist/index.js" },
         },
       },
     });

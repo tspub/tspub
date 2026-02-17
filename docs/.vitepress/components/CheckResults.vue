@@ -35,8 +35,9 @@ interface CheckData {
   fixDiffs: FixDiffEntry[];
   comparison: {
     tspubFinds: number;
-    publintFinds: number;
-    attwFinds: number;
+    publintOverlap: number;
+    attwOverlap: number;
+    tspubOnly: number;
   };
   categoryOrder: string[];
 }
@@ -153,9 +154,10 @@ watch(
     <div class="check-summary">
       <div class="summary-text">
         <strong>tspub</strong> found
-        <strong>{{ data.comparison.tspubFinds }}</strong> issues.
-        publint would find {{ data.comparison.publintFinds }}.
-        attw would find {{ data.comparison.attwFinds }}.
+        <strong>{{ data.comparison.tspubFinds }}</strong> issues —
+        <strong>{{ data.comparison.publintOverlap }}</strong> overlap with publint,
+        <strong>{{ data.comparison.attwOverlap }}</strong> overlap with attw<template v-if="data.comparison.tspubOnly > 0">,
+        <strong>{{ data.comparison.tspubOnly }}</strong> caught only by tspub</template>.
       </div>
       <div class="summary-actions">
         <button

@@ -1,13 +1,9 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { build } from "../../src/builder/index.js";
 import { check } from "../../src/checker/index.js";
-import { rm, cp, readFile } from "node:fs/promises";
+import { rm, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { tmpdir } from "node:os";
-import { fileURLToPath } from "node:url";
-
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const fixturesDir = join(__dirname, "../fixtures");
+import { makeTmpCopy } from "./_helpers.js";
 
 describe("E2E: build → check pipeline", () => {
   const tmps: string[] = [];
@@ -19,16 +15,14 @@ describe("E2E: build → check pipeline", () => {
     tmps.length = 0;
   });
 
-  async function makeTmpCopy(fixtureName: string): Promise<string> {
-    const src = join(fixturesDir, fixtureName);
-    const tmp = join(tmpdir(), `tspub-e2e-${fixtureName}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    await cp(src, tmp, { recursive: true });
-    tmps.push(tmp);
-    return tmp;
+  async function tmpCopy(name: string) {
+    const dir = await makeTmpCopy(name);
+    tmps.push(dir);
+    return dir;
   }
 
   it("simple-pkg builds and then passes check with zero errors", async () => {
-    const dir = await makeTmpCopy("simple-pkg");
+    const dir = await tmpCopy("simple-pkg");
 
     // Build
     await build({
@@ -51,7 +45,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("multi-entry-pkg builds and check validates all entry points", async () => {
-    const dir = await makeTmpCopy("multi-entry-pkg");
+    const dir = await tmpCopy("multi-entry-pkg");
 
     await build({
       formats: ["esm"],
@@ -71,7 +65,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("build with DTS then check validates types exist", async () => {
-    const dir = await makeTmpCopy("simple-pkg");
+    const dir = await tmpCopy("simple-pkg");
 
     await build({
       formats: ["esm"],
@@ -94,7 +88,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("bin-pkg builds with shebang and check validates bin field", async () => {
-    const dir = await makeTmpCopy("bin-pkg");
+    const dir = await tmpCopy("bin-pkg");
 
     await build({
       formats: ["esm"],
@@ -116,7 +110,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("build with define replaces values in output", async () => {
-    const dir = await makeTmpCopy("simple-pkg");
+    const dir = await tmpCopy("simple-pkg");
 
     await build({
       formats: ["esm"],
@@ -134,7 +128,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("build with target option works", async () => {
-    const dir = await makeTmpCopy("simple-pkg");
+    const dir = await tmpCopy("simple-pkg");
 
     await build({
       formats: ["esm"],
@@ -151,7 +145,7 @@ describe("E2E: build → check pipeline", () => {
   });
 
   it("build with platform=browser works", async () => {
-    const dir = await makeTmpCopy("simple-pkg");
+    const dir = await tmpCopy("simple-pkg");
 
     await build({
       formats: ["esm"],

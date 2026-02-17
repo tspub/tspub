@@ -85,7 +85,7 @@ export async function check(options: CheckOptions): Promise<CheckResult[]> {
     const catDiags = diagnostics.filter((d) =>
       d.ruleId.startsWith(cat + "/"),
     );
-    if (!catDiags.some((d) => d.severity === "error")) {
+    if (!catDiags.some((d) => d.severity === "error" || d.severity === "warning")) {
       results.push({
         severity: "ok",
         message: OK_MESSAGES[cat] ?? `${cat} checks passed`,

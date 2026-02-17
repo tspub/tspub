@@ -2,8 +2,9 @@ import { join } from "node:path";
 import type { Rule, RawDiagnostic } from "../../framework/types.js";
 import { walkExports } from "../utils/exports-traversal.js";
 import {
-  getExpectedFormat,
   getCodeFormat,
+  hasESMSyntax,
+  hasCJSSyntax,
   readFileSafe,
 } from "../utils/format-detection.js";
 
@@ -55,10 +56,11 @@ export const falseCjsEsmRule: Rule = {
       if (!jsContent) continue;
 
       const jsFormat = getCodeFormat(jsContent);
-      if (jsFormat === "unknown" || jsFormat === "mixed") continue;
+      if (jsFormat === "unknown") continue;
 
       // Determine what format the .d.ts is declaring
       let declaredFormat: "esm" | "cjs";
+      const explicitDts = dtsPath.endsWith(".d.mts") || dtsPath.endsWith(".d.cts");
       if (dtsPath.endsWith(".d.mts")) {
         declaredFormat = "esm";
       } else if (dtsPath.endsWith(".d.cts")) {
@@ -66,6 +68,27 @@ export const falseCjsEsmRule: Rule = {
       } else {
         // .d.ts — format depends on package type
         declaredFormat = pkgType === "module" ? "esm" : "cjs";
+      }
+
+      // For "mixed" JS: only flag when the dts extension is explicit (.d.cts/.d.mts)
+      // since TypeScript unambiguously treats those as CJS/ESM respectively.
+      // Ambiguous .d.ts with mixed JS is too noisy — skip it.
+      if (jsFormat === "mixed") {
+        if (!explicitDts) continue;
+        const hasContraESM = declaredFormat === "cjs" && hasESMSyntax(jsContent);
+        const hasContraCJS = declaredFormat === "esm" && hasCJSSyntax(jsContent);
+        if (hasContraESM) {
+          results.push({
+            severity: "error",
+            message: `exports["${entry.subpath}"].${entry.condition}: FalseCJS — types "${dtsPath}" declare CJS but "${jsPath}" contains ESM syntax`,
+          });
+        } else if (hasContraCJS) {
+          results.push({
+            severity: "error",
+            message: `exports["${entry.subpath}"].${entry.condition}: FalseESM — types "${dtsPath}" declare ESM but "${jsPath}" contains CJS syntax`,
+          });
+        }
+        continue;
       }
 
       if (declaredFormat === "cjs" && jsFormat === "esm") {
