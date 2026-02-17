@@ -65,10 +65,10 @@ function parseTar(data: Uint8Array): Map<string, string> {
 
     // Tar header: name at 0 (100 bytes), size at 124 (12 bytes, octal)
     // Type flag at byte 156: '0' or '\0' = regular file, '5' = directory
-    const rawName = decoder.decode(header.subarray(0, 100)).replace(/\0/g, "");
+    const rawName = decoder.decode(header.subarray(0, 100)).replaceAll("\0", "");
     const sizeStr = decoder
       .decode(header.subarray(124, 136))
-      .replace(/\0/g, "")
+      .replaceAll("\0", "")
       .trim();
     const size = parseInt(sizeStr, 8) || 0;
 
@@ -77,7 +77,7 @@ function parseTar(data: Uint8Array): Map<string, string> {
     // @types/* packages) store numeric garbage in this field.
     const prefixRaw = decoder
       .decode(header.subarray(345, 500))
-      .replace(/\0/g, "");
+      .replaceAll("\0", "");
     const prefix = /[a-zA-Z]/.test(prefixRaw) ? prefixRaw : "";
     const fullName = prefix ? `${prefix}/${rawName}` : rawName;
 

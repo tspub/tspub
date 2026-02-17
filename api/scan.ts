@@ -250,10 +250,10 @@ function extractTarGz(gzipped: Buffer, outDir: string) {
     // End of archive: two consecutive zero blocks
     if (header.every((b) => b === 0)) break;
 
-    const nameRaw = header.subarray(0, 100).toString("utf-8").replace(/\0/g, "");
-    const sizeOctal = header.subarray(124, 136).toString("utf-8").replace(/\0/g, "").trim();
+    const nameRaw = header.subarray(0, 100).toString("utf-8").replaceAll("\0", "");
+    const sizeOctal = header.subarray(124, 136).toString("utf-8").replaceAll("\0", "").trim();
     const typeFlag = header[156];
-    const prefix = header.subarray(345, 500).toString("utf-8").replace(/\0/g, "");
+    const prefix = header.subarray(345, 500).toString("utf-8").replaceAll("\0", "");
 
     const fullName = prefix ? `${prefix}/${nameRaw}` : nameRaw;
     const size = sizeOctal ? parseInt(sizeOctal, 8) : 0;
