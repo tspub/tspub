@@ -114,6 +114,7 @@ watch(
   () => props.initialPkg,
   (val) => {
     if (val && val !== query.value) {
+      justSelected = true;
       query.value = val;
       emit("search", val);
     }
