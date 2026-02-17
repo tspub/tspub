@@ -2,7 +2,6 @@ import { join } from "node:path";
 import type { Rule, RawDiagnostic } from "../../framework/types.js";
 import { walkExports } from "../utils/exports-traversal.js";
 import {
-  getExpectedFormat,
   getCodeFormat,
   hasESMSyntax,
   hasCJSSyntax,
