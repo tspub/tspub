@@ -111,9 +111,6 @@ export async function runTypeTests(options: TypeTestOptions): Promise<TypeTestRe
       }
     }
 
-    // Check for unused @ts-expect-error — these show as errors too
-    // tsc reports them as "Unused '@ts-expect-error' directive"
-    // These are actually failures in our case (the expected error didn't occur)
   }
 
   // Cleanup

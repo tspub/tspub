@@ -691,13 +691,28 @@ function emitBundle(ctx: BundleContext, declarations: CollectedDeclaration[]): s
 
 async function cleanInlinedFiles(outDir: string, entries: string[], allDts: string[]): Promise<void> {
   const entrySet = new Set(entries.map((e) => resolve(outDir, e)));
+  const deletedSet = new Set<string>();
 
   for (const file of allDts) {
     if (!entrySet.has(resolve(file))) {
       try {
         await rm(file);
+        deletedSet.add(resolve(file));
       } catch (err) {
         logger.verbose(`[dts-bundle] failed to clean ${file}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+  }
+
+  // Also remove orphan .d.cts/.d.mts variants whose .d.ts was deleted
+  const variants = await glob("**/*.d.{cts,mts}", { cwd: resolve(outDir), absolute: true });
+  for (const file of variants) {
+    const baseDts = resolve(file.replace(/\.d\.[cm]ts$/, ".d.ts"));
+    if (deletedSet.has(baseDts)) {
+      try {
+        await rm(file);
+      } catch (err) {
+        logger.verbose(`[dts-bundle] failed to clean variant ${file}: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
   }

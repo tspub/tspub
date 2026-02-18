@@ -251,7 +251,7 @@ export async function buildWithEsbuild(options: EsbuildBuildOptions): Promise<Bu
   // Generate .d.ts files
   if (dts) {
     try {
-      await generateDts({ dir, outDir, packageType });
+      await generateDts({ dir, outDir, packageType, formats: formats as string[] });
 
       // Relocate .d.ts files for object entries where outName differs from source path
       if (!Array.isArray(entry)) {

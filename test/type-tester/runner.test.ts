@@ -73,4 +73,24 @@ describe("runTypeTests", { timeout: 30_000 }, () => {
     const result = await runTypeTests({ dir: tmpDir });
     expect(result.fileCount).toBe(1);
   });
+
+  it("detects unused @ts-expect-error as error", async () => {
+    await writeFile(
+      join(tmpDir, "tsconfig.json"),
+      JSON.stringify({
+        compilerOptions: { strict: true, noEmit: true, module: "esnext", moduleResolution: "bundler" },
+      }),
+    );
+
+    // @ts-expect-error on a line that has no error → TS2578
+    await writeFile(
+      join(tmpDir, "test-d", "unused-expect.test-d.ts"),
+      "// @ts-expect-error\nconst x: string = 'hello';\n",
+    );
+
+    const result = await runTypeTests({ dir: tmpDir });
+    expect(result.passed).toBe(false);
+    expect(result.errors.length).toBeGreaterThanOrEqual(1);
+    expect(result.errors.some((e) => e.message.includes("@ts-expect-error"))).toBe(true);
+  });
 });

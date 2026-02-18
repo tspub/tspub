@@ -19,10 +19,12 @@ export interface DtsOptions {
   outDir: string;
   /** Package type field — determines which dual-format variants to emit */
   packageType?: "module" | "commonjs";
+  /** Build formats requested — controls which .d.cts/.d.mts variants to emit */
+  formats?: string[];
 }
 
 export async function generateDts(options: DtsOptions): Promise<void> {
-  const { dir, outDir, packageType } = options;
+  const { dir, outDir, packageType, formats } = options;
   const outPath = join(dir, outDir);
 
   // Check if isolatedDeclarations fast-path is available
@@ -71,17 +73,15 @@ export async function generateDts(options: DtsOptions): Promise<void> {
     const name = basename(file);
     if (name.endsWith(".d.cts") || name.endsWith(".d.mts")) continue;
 
-    if (packageType === "module") {
+    if (packageType === "module" && (!formats || formats.includes("cjs"))) {
       // ESM package: .d.ts is primary (ESM semantics).
-      // Create .d.cts variant — rewrite top-level `export` to CJS-compatible form
-      // if possible, otherwise copy as-is (TypeScript handles most cases).
+      // Create .d.cts variant only if CJS format is being built.
       const ctsPath = file.replace(/\.d\.ts$/, ".d.cts");
       const content = await readFile(file, "utf-8");
-      // Add an explicit marker comment so tooling knows this was auto-generated
       await writeFile(ctsPath, `// Auto-generated CJS declaration from ${basename(file)}\n${content}`);
-    } else if (packageType === "commonjs") {
+    } else if (packageType === "commonjs" && (!formats || formats.includes("esm"))) {
       // CJS package: .d.ts is primary (CJS semantics).
-      // Create .d.mts variant with marker comment.
+      // Create .d.mts variant only if ESM format is being built.
       const mtsPath = file.replace(/\.d\.ts$/, ".d.mts");
       const content = await readFile(file, "utf-8");
       await writeFile(mtsPath, `// Auto-generated ESM declaration from ${basename(file)}\n${content}`);
