@@ -1,11 +1,14 @@
 import DefaultTheme from "vitepress/theme";
 import type { Theme } from "vitepress";
+import { inject } from "@vercel/analytics";
 import "./playground.css";
 
 export default {
   extends: DefaultTheme,
   enhanceApp({ router }) {
     if (typeof window === "undefined") return;
+
+    inject();
 
     // Vercel rewrites /check/:pkg and /scan/:path to /playground, so the
     // correct HTML is served. But VitePress's client-side router doesn't

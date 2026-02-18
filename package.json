@@ -80,6 +80,7 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/prompts": "^2.4.9",
+    "@vercel/analytics": "^1.6.1",
     "@vercel/node": "^5.1.0",
     "@vercel/og": "^0.6.0",
     "@vitest/coverage-v8": "^3.2.4",
